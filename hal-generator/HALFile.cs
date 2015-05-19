@@ -52,6 +52,7 @@ namespace hal_generator
 
         public void GenerateHALRoboRIOFile()
         {
+            HALRoboRIOFile.AppendLine("//File automatically generated using robotdotnet-tools. Please do not modify.");
             HALRoboRIOFile.AppendLine("using HAL_Base;");
             HALRoboRIOFile.AppendLine("namespace HAL_RoboRIO");
             HALRoboRIOFile.AppendLine("{");
@@ -101,6 +102,7 @@ namespace hal_generator
 
         public void GenerateHALBaseFile()
         {
+            HALBaseFile.AppendLine("//File automatically generated using robotdotnet-tools. Please do not modify.");
             HALBaseFile.AppendLine("using System;");
             HALBaseFile.AppendLine("using System.Linq;");
             HALBaseFile.AppendLine("using System.Reflection;");
