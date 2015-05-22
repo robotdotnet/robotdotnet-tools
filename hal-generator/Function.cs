@@ -88,6 +88,8 @@ namespace hal_generator
                     paramName = tmp[1].Trim();
                     if (local.Contains("char *") || local.Contains("char*"))
                         paramType = "string";
+                    else if (local.Contains("uint8_t *"))
+                        paramType = "byte[]";
                     else
                         paramType = local.Contains("void") ? "System.IntPtr" : "ref " + TypeConversion.ToCSharpType(tmp[0]);
 
