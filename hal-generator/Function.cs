@@ -128,7 +128,7 @@ namespace hal_generator
                 string[] tmp = funcRetAndName.Split('*');
                 funcName = tmp[1].Trim();
                 if (funcRetAndName.Contains("char *") || funcRetAndName.Contains("char*"))
-                    retType = "string";
+                    retType = "System.IntPtr";
                 else
                     retType = funcRetAndName.Contains("void") ? "System.IntPtr" : TypeConversion.ToCSharpType(tmp[0]);
 
