@@ -43,7 +43,8 @@
             this.otherFileLabel = new System.Windows.Forms.Label();
             this.robotFileFound = new System.Windows.Forms.CheckBox();
             this.robotFileNameLabel = new System.Windows.Forms.Label();
-            this.otherFiles = new System.Windows.Forms.ListBox();
+            this.otherFilesTextBox = new System.Windows.Forms.ListBox();
+            this.networkTablesFound = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // teamNumber
@@ -132,7 +133,7 @@
             // 
             // codeDirectoryButton
             // 
-            this.codeDirectoryButton.Location = new System.Drawing.Point(286, 161);
+            this.codeDirectoryButton.Location = new System.Drawing.Point(331, 165);
             this.codeDirectoryButton.Name = "codeDirectoryButton";
             this.codeDirectoryButton.Size = new System.Drawing.Size(125, 23);
             this.codeDirectoryButton.TabIndex = 9;
@@ -155,7 +156,7 @@
             // 
             this.HALBaseFound.AutoSize = true;
             this.HALBaseFound.Enabled = false;
-            this.HALBaseFound.Location = new System.Drawing.Point(150, 187);
+            this.HALBaseFound.Location = new System.Drawing.Point(191, 189);
             this.HALBaseFound.Name = "HALBaseFound";
             this.HALBaseFound.Size = new System.Drawing.Size(116, 17);
             this.HALBaseFound.TabIndex = 11;
@@ -165,7 +166,7 @@
             // otherFileLabel
             // 
             this.otherFileLabel.AutoSize = true;
-            this.otherFileLabel.Location = new System.Drawing.Point(283, 191);
+            this.otherFileLabel.Location = new System.Drawing.Point(328, 195);
             this.otherFileLabel.Name = "otherFileLabel";
             this.otherFileLabel.Size = new System.Drawing.Size(90, 13);
             this.otherFileLabel.TabIndex = 13;
@@ -191,22 +192,34 @@
             this.robotFileNameLabel.TabIndex = 14;
             this.robotFileNameLabel.Text = "RobotFileName";
             // 
-            // otherFiles
+            // otherFilesTextBox
             // 
-            this.otherFiles.FormattingEnabled = true;
-            this.otherFiles.Location = new System.Drawing.Point(286, 208);
-            this.otherFiles.Name = "otherFiles";
-            this.otherFiles.Size = new System.Drawing.Size(223, 82);
-            this.otherFiles.TabIndex = 15;
+            this.otherFilesTextBox.FormattingEnabled = true;
+            this.otherFilesTextBox.Location = new System.Drawing.Point(331, 212);
+            this.otherFilesTextBox.Name = "otherFilesTextBox";
+            this.otherFilesTextBox.Size = new System.Drawing.Size(223, 82);
+            this.otherFilesTextBox.TabIndex = 15;
+            // 
+            // networkTablesFound
+            // 
+            this.networkTablesFound.AutoSize = true;
+            this.networkTablesFound.Enabled = false;
+            this.networkTablesFound.Location = new System.Drawing.Point(191, 212);
+            this.networkTablesFound.Name = "networkTablesFound";
+            this.networkTablesFound.Size = new System.Drawing.Size(140, 17);
+            this.networkTablesFound.TabIndex = 11;
+            this.networkTablesFound.Text = "Network Tables Found?";
+            this.networkTablesFound.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(521, 303);
-            this.Controls.Add(this.otherFiles);
+            this.ClientSize = new System.Drawing.Size(565, 303);
+            this.Controls.Add(this.otherFilesTextBox);
             this.Controls.Add(this.robotFileNameLabel);
             this.Controls.Add(this.otherFileLabel);
+            this.Controls.Add(this.networkTablesFound);
             this.Controls.Add(this.HALBaseFound);
             this.Controls.Add(this.robotFileFound);
             this.Controls.Add(this.wpilibFound);
@@ -244,7 +257,8 @@
         private System.Windows.Forms.Label otherFileLabel;
         private System.Windows.Forms.CheckBox robotFileFound;
         private System.Windows.Forms.Label robotFileNameLabel;
-        private System.Windows.Forms.ListBox otherFiles;
+        private System.Windows.Forms.ListBox otherFilesTextBox;
+        private System.Windows.Forms.CheckBox networkTablesFound;
     }
 }
 

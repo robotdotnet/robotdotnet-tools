@@ -19,10 +19,12 @@ namespace DeployRobot
         const string TEAM_NUMBER_FILE = "team.txt";
         const string USB_IP = "172.22.11.2";
 
+        List<DeployFile> otherFiles = new List<DeployFile>();
         List<DeployFile> deployFiles = new List<DeployFile>();
         DeployFile robotFile;
         DeployFile WPILibFile;
         DeployFile HALBaseFile;
+        DeployFile NetworkTablesFile;
 
 
         public Main()
@@ -54,15 +56,20 @@ namespace DeployRobot
                     }
                 }
             }
-            
 
-            codeDirectory.Text = @"C:\Users\Thad\Documents\GitHub\robotdotnet-wpilib\WPILib\bin\Debug";//Application.StartupPath;
+            wpilibFound.CheckedChanged += checkIfReady;
+            networkTablesFound.CheckedChanged += checkIfReady;
+            wpilibFound.CheckedChanged += checkIfReady;
+            robotFileFound.CheckedChanged += checkIfReady;
+
+
+            codeDirectory.Text = @"C:\Users\Thad\Documents\Visual Studio 2013\Projects\RobotTest\RobotTest\bin\Debug";//Application.StartupPath;
             
             //Figure out how to get data source to automaticalyl update.
-            otherFiles.DataSource = deployFiles;
-            otherFiles.DisplayMember = "FileName";
+            otherFilesTextBox.DataSource = otherFiles;
+            otherFilesTextBox.DisplayMember = "FileName";
 
-            otherFiles.Refresh();
+            otherFilesTextBox.Refresh();
             
 
 
@@ -164,7 +171,9 @@ namespace DeployRobot
                         var classes = from t in asm.GetTypes() where robotBase.IsAssignableFrom(t) select t;
                         if (classes.ToList().Count == 0)
                         {
-                            deployFiles.Add(new DeployFile(f, false, false));
+                            DeployFile file = new DeployFile(f, false, false);
+                            deployFiles.Add(file);
+                            otherFiles.Add(file);
                         }
                         else
                         {
@@ -172,6 +181,7 @@ namespace DeployRobot
                             robotFileFound.Checked = true;
                             var split = f.Split(Path.DirectorySeparatorChar);
                             robotFileNameLabel.Text = split[split.Length - 1];
+                            deployFiles.Add(robotFile);
                         }
                         
                     }
@@ -181,21 +191,34 @@ namespace DeployRobot
                         {
                             WPILibFile = new DeployFile(f, true, false);
                             wpilibFound.Checked = true;
+                            deployFiles.Add(WPILibFile);
                             continue;
                         }
                         if (f.Contains("HAL-Base.dll"))
                         {
                             HALBaseFile = new DeployFile(f, true, false);
                             HALBaseFound.Checked = true;
+                            deployFiles.Add(HALBaseFile);
                             continue;
                         }
-                        deployFiles.Add(new DeployFile(f, false, false));
+                        if (f.Contains("NetworkTablesDotNet.dll"))
+                        {
+                            NetworkTablesFile = new DeployFile(f, true, false);
+                            networkTablesFound.Checked = true;
+                            deployFiles.Add(NetworkTablesFile);
+                            continue;
+                        }
+                        DeployFile file = new DeployFile(f, false, false);
+                        deployFiles.Add(file);
+                        otherFiles.Add(file);
                         
                     }
                     else
                     {
                         //Other Files
-                        deployFiles.Add(new DeployFile(f, false, false));
+                        DeployFile file = new DeployFile(f, false ,false);
+                        otherFiles.Add(file);
+                        deployFiles.Add(file);
                     }
                 }
 
@@ -207,12 +230,23 @@ namespace DeployRobot
         private void codeDirectoryButton_Click(object sender, EventArgs e)
         {
             var dialog = new FolderBrowserDialog();
-            //dialog.RootFolder = Environment.SpecialFolder.MyDocuments;
             dialog.ShowNewFolderButton = false;
             var result = dialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 codeDirectory.Text = dialog.SelectedPath;
+            }
+        }
+
+        private void checkIfReady(object sender, EventArgs e)
+        {
+            if (wpilibFound.Checked && HALBaseFound.Checked && networkTablesFound.Checked && robotFileFound.Checked)
+            {
+                deployButton.Enabled = true;
+            }
+            else
+            {
+                deployButton.Enabled = false;
             }
         }
     }
