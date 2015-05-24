@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Reflection;
 
 namespace DeployRobot
 {
@@ -18,6 +19,12 @@ namespace DeployRobot
         const string TEAM_NUMBER_FILE = "team.txt";
         const string USB_IP = "172.22.11.2";
 
+        List<DeployFile> deployFiles = new List<DeployFile>();
+        DeployFile robotFile;
+        DeployFile WPILibFile;
+        DeployFile HALBaseFile;
+
+
         public Main()
         {
             InitializeComponent();
@@ -25,6 +32,7 @@ namespace DeployRobot
             ArgParse.AddArgument("ad", "autodeploy", false, "Use to autodeploy code to the robot.");
             ArgParse.AddArgument("hal", "skip-hal", false, true, "Use to check skip the check for the newest HAL Version.");
             ArgParse.AddArgument("team", "teamnumber", false, "Add Team Number");
+            ArgParse.AddArgument("debug", "debug", false, "Weither to run debug.");
 
             string[] args = Environment.GetCommandLineArgs();
 
@@ -46,6 +54,17 @@ namespace DeployRobot
                     }
                 }
             }
+            
+
+            codeDirectory.Text = @"C:\Users\Thad\Documents\GitHub\robotdotnet-wpilib\WPILib\bin\Debug";//Application.StartupPath;
+            
+            //Figure out how to get data source to automaticalyl update.
+            otherFiles.DataSource = deployFiles;
+            otherFiles.DisplayMember = "FileName";
+
+            otherFiles.Refresh();
+            
+
 
             if (cmdArguments.ContainsKey("autoconnect"))
             {
@@ -67,6 +86,133 @@ namespace DeployRobot
             {
                 //Check Team number to make sure it is valid
                 ipAddr = ("roborio-" + teamNumber.Text + ".local");
+            }
+
+
+        }
+
+        static string deployDir = "/home/lvuser";
+        static string monoDeployDir = deployDir + "/mono";
+        static string robotFilename = "robot.exe";
+
+        public void UploadCode()
+        {
+            string deployedCmd;
+            string deployedCmdFrame;
+            string extraCmd;
+            if (cmdArguments.ContainsKey("debug"))
+            {
+                deployedCmd = "env LD_PRELOAD=/lib/libstdc++.so.6.0.20 /usr/local/frc/bin/netconsole-host mono --debug " + monoDeployDir + "/" + robotFilename;
+                deployedCmdFrame = "robotDebugCommand";
+                extraCmd = "touch /tmp/frcdebug; chown lvuser:ni /tmp/frcdebug";
+            }
+            else
+            {
+                deployedCmd = "env LD_PRELOAD=/lib/libstdc++.so.6.0.20 /usr/local/frc/bin/netconsole-host mono " + monoDeployDir + "/" + robotFilename;
+                deployedCmdFrame = "robotCommand";
+                extraCmd = "";
+            }
+
+
+
+        }
+
+        Type robotBase = null;
+
+        private void codeDirectory_TextChanged(object sender, EventArgs e)
+        {
+            deployFiles.Clear();
+            if (Directory.Exists(codeDirectory.Text))
+            {
+                //Find Robot Base first (This is so we can figure out the executable.
+                if (File.Exists(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll"))
+                {
+                    var asm = Assembly.LoadFrom(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll");
+                    try
+                    {
+                        var types = asm.GetTypes();
+                        var temp = types[0];
+                        robotBase = asm.GetType("WPILib.RobotBase", true);
+                        //WPILibFile = new DeployFile(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll", true, false);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+                foreach (string f in Directory.GetFiles(codeDirectory.Text))
+                {
+                    if (f.Contains("pdb") || f.Contains("vshost") || f.Contains(".config") | f.Contains(".manifest"))
+                        continue;
+                    if (f.Contains(".exe"))
+                    {
+                        /*
+                        string thisName = Assembly.GetExecutingAssembly().GetName().Name;
+                        if (f.Contains(thisName))
+                        {
+                            continue;
+                        }
+                         * */
+                        var asm = Assembly.LoadFrom(f);
+                        //Check to see if asm is this assembly
+                        //If so skip it.
+
+                        var classes = from t in asm.GetTypes() where robotBase.IsAssignableFrom(t) select t;
+                        if (classes.ToList().Count == 0)
+                        {
+                            deployFiles.Add(new DeployFile(f, false, false));
+                        }
+                        else
+                        {
+                            robotFile = new DeployFile(f, true, true);
+                            robotFileFound.Checked = true;
+                            var split = f.Split(Path.DirectorySeparatorChar);
+                            robotFileNameLabel.Text = split[split.Length - 1];
+                        }
+                        
+                    }
+                    else if (f.Contains(".dll"))
+                    {
+                        if (f.Contains("WPILib.dll"))
+                        {
+                            WPILibFile = new DeployFile(f, true, false);
+                            wpilibFound.Checked = true;
+                            continue;
+                        }
+                        if (f.Contains("HAL-Base.dll"))
+                        {
+                            HALBaseFile = new DeployFile(f, true, false);
+                            HALBaseFound.Checked = true;
+                            continue;
+                        }
+                        deployFiles.Add(new DeployFile(f, false, false));
+                        
+                    }
+                    else
+                    {
+                        //Other Files
+                        deployFiles.Add(new DeployFile(f, false, false));
+                    }
+                }
+
+
+                
+            }
+        }
+
+        private void codeDirectoryButton_Click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog();
+            //dialog.RootFolder = Environment.SpecialFolder.MyDocuments;
+            dialog.ShowNewFolderButton = false;
+            var result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                codeDirectory.Text = dialog.SelectedPath;
             }
         }
     }
