@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>RobotDotNet SampleRobot</Name>
+    <Description>RobotDotNet SampleRobot</Description>
+    <Icon>RobotDotNet SampleRobot.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>333a95cd-0e6a-4649-8848-6af7bc29ffbe</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>SampleRobot</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Robot.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true">Main.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true">packages.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
