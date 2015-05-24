@@ -129,6 +129,12 @@ namespace DeployRobot
         private void codeDirectory_TextChanged(object sender, EventArgs e)
         {
             deployFiles.Clear();
+            otherFiles.Clear();
+            HALBaseFound.Checked = false;
+            wpilibFound.Checked = false;
+            networkTablesFound.Checked = false;
+            robotFileFound.Checked = false;
+            robotFileNameLabel.Text = "None";
             if (Directory.Exists(codeDirectory.Text))
             {
                 //Find Robot Base first (This is so we can figure out the executable.
