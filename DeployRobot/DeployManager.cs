@@ -23,6 +23,7 @@ namespace DeployRobot
             if (!m_manager.Connected) return false;
             Thread t = new Thread(() =>
             {
+
                 InstallDeployManager.DeployFiles(files.Select(f => f.FileNamePath).ToArray(), "/home/lvuser/mono", m_manager.Connection);
 
                 

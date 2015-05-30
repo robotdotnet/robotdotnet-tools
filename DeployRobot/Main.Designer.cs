@@ -118,13 +118,13 @@
             // 
             this.codeDirectory.Location = new System.Drawing.Point(35, 161);
             this.codeDirectory.Name = "codeDirectory";
-            this.codeDirectory.Size = new System.Drawing.Size(216, 20);
+            this.codeDirectory.Size = new System.Drawing.Size(518, 20);
             this.codeDirectory.TabIndex = 8;
             this.codeDirectory.TextChanged += new System.EventHandler(this.codeDirectory_TextChanged);
             // 
             // codeDirectoryButton
             // 
-            this.codeDirectoryButton.Location = new System.Drawing.Point(331, 165);
+            this.codeDirectoryButton.Location = new System.Drawing.Point(331, 132);
             this.codeDirectoryButton.Name = "codeDirectoryButton";
             this.codeDirectoryButton.Size = new System.Drawing.Size(125, 23);
             this.codeDirectoryButton.TabIndex = 9;
@@ -206,7 +206,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(565, 303);
+            this.ClientSize = new System.Drawing.Size(965, 308);
             this.Controls.Add(this.otherFilesTextBox);
             this.Controls.Add(this.robotFileNameLabel);
             this.Controls.Add(this.otherFileLabel);
@@ -226,6 +226,7 @@
             this.Name = "Main";
             this.Text = "RobotDotNet Deploy";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
+            this.Load += new System.EventHandler(this.Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

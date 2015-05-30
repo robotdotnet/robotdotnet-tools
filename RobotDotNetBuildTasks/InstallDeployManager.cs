@@ -72,6 +72,7 @@ namespace RobotDotNetBuildTasks
                     {
                         FileInfo fileInfo = new FileInfo(s);
                         scp.Upload(fileInfo, deployLocation);
+                        
                     }
                 }
             }

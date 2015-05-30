@@ -32,7 +32,7 @@ namespace DeployRobot
 
         public bool CheckHALVersion(double netHAL, double soHAL, bool blocking = false)
         {
-
+            Main.AppendToTop("Checking HAL Version");
             bool retVal = false;
             Thread t = new Thread(() =>
             {
@@ -73,6 +73,15 @@ namespace DeployRobot
             if (blocking)
                 t.Join();
             return retVal;
+        }
+
+        public string GetHALStatus()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("HAL Status:");
+            builder.AppendLine("Current version correct: " + matches);
+            builder.Append("Current version: " + rioVersion);
+            return builder.ToString();
         }
     }
 }

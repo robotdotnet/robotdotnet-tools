@@ -44,6 +44,10 @@ namespace RobotDotNetBuildTasks
                 conIP = roboRioMDNS;
                 return connection;
             }
+            catch (SocketException ex)
+            {
+
+            }
             catch (SshOperationTimeoutException ex)
             {
                 
@@ -55,6 +59,10 @@ namespace RobotDotNetBuildTasks
                 conIP = ROBO_RIO_USB_IP;
                 return connection;
             }
+            catch (SocketException ex)
+            {
+
+            }
             catch (SshOperationTimeoutException ex)
             {
 
@@ -65,6 +73,10 @@ namespace RobotDotNetBuildTasks
                 type = ConnectionType.IP;
                 conIP = roboRIOIP;
                 return connection;
+            }
+            catch (SocketException ex)
+            {
+
             }
             catch (SshOperationTimeoutException ex)
             {

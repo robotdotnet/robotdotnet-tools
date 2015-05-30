@@ -58,5 +58,14 @@ namespace DeployRobot
             }
 
         }
+
+        public string GetConnectionStatus()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(Connected ? "Connected to RoboRIO..." : "Connection to RoboRIO failed...");
+            builder.AppendLine("Interface: " + connectionType.ToString());
+            builder.Append("IP Address: " + connectionIP);
+            return builder.ToString();
+        }
     }
 }
