@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.teamNumber = new System.Windows.Forms.TextBox();
-            this.isUSBConnected = new System.Windows.Forms.CheckBox();
             this.connectButton = new System.Windows.Forms.Button();
             this.connectionStatus = new System.Windows.Forms.Label();
             this.halLabel = new System.Windows.Forms.Label();
@@ -54,16 +53,6 @@
             this.teamNumber.Size = new System.Drawing.Size(133, 20);
             this.teamNumber.TabIndex = 0;
             // 
-            // isUSBConnected
-            // 
-            this.isUSBConnected.AutoSize = true;
-            this.isUSBConnected.Location = new System.Drawing.Point(35, 56);
-            this.isUSBConnected.Name = "isUSBConnected";
-            this.isUSBConnected.Size = new System.Drawing.Size(141, 17);
-            this.isUSBConnected.TabIndex = 1;
-            this.isUSBConnected.Text = "Force USB Connection?";
-            this.isUSBConnected.UseVisualStyleBackColor = true;
-            // 
             // connectButton
             // 
             this.connectButton.Location = new System.Drawing.Point(185, 30);
@@ -72,6 +61,7 @@
             this.connectButton.TabIndex = 2;
             this.connectButton.Text = "Connect to Robot";
             this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
             // connectionStatus
             // 
@@ -122,6 +112,7 @@
             this.deployButton.TabIndex = 7;
             this.deployButton.Text = "Deploy Robot Code";
             this.deployButton.UseVisualStyleBackColor = true;
+            this.deployButton.Click += new System.EventHandler(this.deployButton_Click);
             // 
             // codeDirectory
             // 
@@ -231,10 +222,10 @@
             this.Controls.Add(this.halLabel);
             this.Controls.Add(this.connectionStatus);
             this.Controls.Add(this.connectButton);
-            this.Controls.Add(this.isUSBConnected);
             this.Controls.Add(this.teamNumber);
             this.Name = "Main";
             this.Text = "RobotDotNet Deploy";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Main_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,7 +234,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox teamNumber;
-        private System.Windows.Forms.CheckBox isUSBConnected;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Label connectionStatus;
         private System.Windows.Forms.Label halLabel;

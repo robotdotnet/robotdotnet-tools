@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using Renci.SshNet;
+using RobotDotNetBuildTasks;
 
 namespace DeployRobot
 {
@@ -17,7 +21,6 @@ namespace DeployRobot
         Dictionary<string, string> cmdArguments;
 
         const string TEAM_NUMBER_FILE = "team.txt";
-        const string USB_IP = "172.22.11.2";
 
         List<DeployFile> otherFiles = new List<DeployFile>();
         List<DeployFile> deployFiles = new List<DeployFile>();
@@ -26,17 +29,29 @@ namespace DeployRobot
         DeployFile HALBaseFile;
         DeployFile NetworkTablesFile;
 
+        private ConnectionManager connectionManager;
+        private DeployManager deployManager;
+        private HALManager halManager;
+
+        private bool checkedHAL = false;
+
 
         public Main()
         {
             InitializeComponent();
-            ArgParse.AddArgument("ac", "autoconnect", false, true, "Use if asked to AutoConnect to Robot.");
+            connectionManager = new ConnectionManager();
+            deployManager = new DeployManager(ref connectionManager);
+            halManager = new HALManager(ref connectionManager);
+
+            ArgParse.AddArgument("nac", "noautoconnect", false, true, "Use to not autoconnect to Robot.");
             ArgParse.AddArgument("ad", "autodeploy", false, "Use to autodeploy code to the robot.");
             ArgParse.AddArgument("hal", "skip-hal", false, true, "Use to check skip the check for the newest HAL Version.");
             ArgParse.AddArgument("team", "teamnumber", false, "Add Team Number");
             ArgParse.AddArgument("debug", "debug", false, "Weither to run debug.");
 
             string[] args = Environment.GetCommandLineArgs();
+
+            //var x = RoboRIOConnection.CheckConnection(4488);
 
             cmdArguments = ArgParse.ParseArguments(args);
 
@@ -52,51 +67,113 @@ namespace DeployRobot
                 {
                     if (fileRead[0].Contains("team"))
                     {
-                        teamNumber.Text = fileRead[0].Substring(fileRead[0].IndexOf(':') + 1, fileRead[0].Length - (fileRead[0].IndexOf(':')+ 1)).Trim();
+                        teamNumber.Text = fileRead[0].Substring(fileRead[0].IndexOf(':') + 1, fileRead[0].Length - (fileRead[0].IndexOf(':') + 1)).Trim();
                     }
                 }
             }
 
-            wpilibFound.CheckedChanged += checkIfReady;
-            networkTablesFound.CheckedChanged += checkIfReady;
-            wpilibFound.CheckedChanged += checkIfReady;
-            robotFileFound.CheckedChanged += checkIfReady;
+            wpilibFound.CheckedChanged += CheckIfReady;
+            networkTablesFound.CheckedChanged += CheckIfReady;
+            wpilibFound.CheckedChanged += CheckIfReady;
+            robotFileFound.CheckedChanged += CheckIfReady;
+            connectionStatus.TextChanged += CheckIfReady;
+            updateHAL.CheckedChanged += CheckIfReady;
 
 
-            codeDirectory.Text = @"C:\Users\Thad\Documents\Visual Studio 2013\Projects\RobotTest\RobotTest\bin\Debug";//Application.StartupPath;
-            
-            //Figure out how to get data source to automaticalyl update.
-            otherFilesTextBox.DataSource = otherFiles;
-            otherFilesTextBox.DisplayMember = "FileName";
-
-            otherFilesTextBox.Refresh();
-            
+            codeDirectory.Text = @"C:\Users\thad\Documents\GitHub\WildFireDotNet\Wildfire\bin\Release";//Application.StartupPath;
 
 
+            //this.Hide();
+
+            /*
             if (cmdArguments.ContainsKey("autoconnect"))
             {
-                //Run Connect
+
+                connectionManager.Connect(teamNumber.Text, true);
+                halManager.CheckHALVersion(1.0, 326);
+
             }
             if (cmdArguments.ContainsKey("autodeploy"))
             {
                 //Run Connect
+                if (!cmdArguments.ContainsKey("autoconnect"))
+                {
+                    connectionManager.Connect(teamNumber.Text, true);
+                }
                 //Run Deploy
+                halManager.CheckHALVersion(1.0, 326, true);
+                deployManager.Deploy(deployFiles, true);
             }
-        }
-
-        public void Connect()
-        {
-            string ipAddr;
-            if (isUSBConnected.Checked)
-                ipAddr = USB_IP;
-            else
+             * */
+            connectionManager.TaskComplete += connectionManager_TaskComplete;
+            deployManager.TaskComplete += deployManager_TaskComplete;
+            halManager.TaskComplete += halManager_TaskComplete;
+            if (!cmdArguments.ContainsKey("noautoconnect"))
             {
-                //Check Team number to make sure it is valid
-                ipAddr = ("roborio-" + teamNumber.Text + ".local");
+                connectButton.Enabled = false;
+                connectionManager.Connect(teamNumber.Text);
             }
+            //this.Show();
+        }
 
+        void halManager_TaskComplete(object sender, EventArgs e)
+        {
+            
+            Action action = () =>
+            {
+                string hal = "HAL Version: ";
+                if (halManager.Matches)
+                {
+                    hal += halManager.HALVersion;
+                    halNewestVersion.Text = "HAL Newest Version: True";
+                    updateHAL.Checked = false;
+                }
+                else
+                {
+                    hal += "Not Found";
+                    halNewestVersion.Text = "HAL Newest Version: False";
+                    updateHAL.Checked = true;
+                }
+                halLabel.Text = hal;
+                checkedHAL = true;
+            };
+            halLabel.Invoke(action);
 
         }
+
+        void deployManager_TaskComplete(object sender, EventArgs e)
+        {
+            Action action = () =>
+            {
+                deployButton.Enabled = true;
+            };
+            deployButton.Invoke(action);
+        }
+
+        void connectionManager_TaskComplete(object sender, EventArgs e)
+        {
+            if (connectionManager.Connected)
+                halManager.CheckHALVersion(1.0, 326);
+            Action action = () =>
+            {
+                string connectionString = "Connection Status: ";
+                switch (connectionManager.Connected)
+                {
+                    case false:
+                        connectionString += "Not Connected";
+                        break;
+                    case true:
+                        connectionString += "Connected\n";
+                        connectionString += connectionManager.ConnectionIP;
+                        break;
+                }
+                connectionStatus.Text = connectionString;
+                connectButton.Enabled = true;
+            };
+            connectionStatus.Invoke(action);
+        }
+
+
 
         static string deployDir = "/home/lvuser";
         static string monoDeployDir = deployDir + "/mono";
@@ -124,8 +201,6 @@ namespace DeployRobot
 
         }
 
-        Type robotBase = null;
-
         private void codeDirectory_TextChanged(object sender, EventArgs e)
         {
             deployFiles.Clear();
@@ -135,18 +210,19 @@ namespace DeployRobot
             networkTablesFound.Checked = false;
             robotFileFound.Checked = false;
             robotFileNameLabel.Text = "None";
+            otherFilesTextBox.DataSource = null;
+            otherFilesTextBox.DataSource = otherFiles;
+            otherFilesTextBox.DisplayMember = "FileName";
             if (Directory.Exists(codeDirectory.Text))
             {
                 //Find Robot Base first (This is so we can figure out the executable.
+                Type m_robotBase;
                 if (File.Exists(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll"))
                 {
                     var asm = Assembly.LoadFrom(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll");
                     try
                     {
-                        var types = asm.GetTypes();
-                        var temp = types[0];
-                        robotBase = asm.GetType("WPILib.RobotBase", true);
-                        //WPILibFile = new DeployFile(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll", true, false);
+                        m_robotBase = asm.GetType("WPILib.RobotBase", true);
                     }
                     catch
                     {
@@ -159,28 +235,30 @@ namespace DeployRobot
                 }
                 foreach (string f in Directory.GetFiles(codeDirectory.Text))
                 {
+                    //Ignore non pure DLL or EXE files
                     if (f.Contains("pdb") || f.Contains("vshost") || f.Contains(".config") | f.Contains(".manifest"))
                         continue;
+                    //If its an EXE
                     if (f.Contains(".exe"))
                     {
-                        /*
-                        string thisName = Assembly.GetExecutingAssembly().GetName().Name;
-                        if (f.Contains(thisName))
+                        //See if it is the deploy executable. If so, do not include it
+                        if (f.Contains(Process.GetCurrentProcess().ProcessName.Split('.')[0]))
                         {
                             continue;
                         }
-                         * */
-                        var asm = Assembly.LoadFrom(f);
-                        //Check to see if asm is this assembly
-                        //If so skip it.
 
-                        var classes = from t in asm.GetTypes() where robotBase.IsAssignableFrom(t) select t;
+                        //Load Assembly, in order to find the main robot file.
+                        var asm = Assembly.LoadFrom(f);
+
+                        var classes = from t in asm.GetTypes() where m_robotBase.IsAssignableFrom(t) select t;
+                        //if no class extending from RobotBase was found, include it as a normal file
                         if (classes.ToList().Count == 0)
                         {
                             DeployFile file = new DeployFile(f, false, false);
                             deployFiles.Add(file);
                             otherFiles.Add(file);
                         }
+                        //Otherwise its the robot file, and we want to keep it specialized.
                         else
                         {
                             robotFile = new DeployFile(f, true, true);
@@ -189,10 +267,13 @@ namespace DeployRobot
                             robotFileNameLabel.Text = split[split.Length - 1];
                             deployFiles.Add(robotFile);
                         }
-                        
+
                     }
+                    //If its a DLL
                     else if (f.Contains(".dll"))
                     {
+                        // Special cases for HAL-Base, WPILib and NetworkTables. Also
+                        // ignoring any other HAL files.
                         if (f.Contains("WPILib.dll"))
                         {
                             WPILibFile = new DeployFile(f, true, false);
@@ -214,39 +295,48 @@ namespace DeployRobot
                             deployFiles.Add(NetworkTablesFile);
                             continue;
                         }
+                        if (f.Contains("HAL"))
+                        {
+                            continue;
+                        }
                         DeployFile file = new DeployFile(f, false, false);
                         deployFiles.Add(file);
                         otherFiles.Add(file);
-                        
+
                     }
                     else
                     {
-                        //Other Files
-                        DeployFile file = new DeployFile(f, false ,false);
+                        //Adding any other files
+                        DeployFile file = new DeployFile(f, false, false);
                         otherFiles.Add(file);
                         deployFiles.Add(file);
                     }
                 }
 
+                //Reset the data sources.
+                otherFilesTextBox.DataSource = null;
+                otherFilesTextBox.DataSource = otherFiles;
+                otherFilesTextBox.DisplayMember = "FileName";
 
-                
             }
         }
 
+        //Browse for the folder. 
+        //I want to make this look like the better folder dialog, but that is going to require
+        //Some custom code.
         private void codeDirectoryButton_Click(object sender, EventArgs e)
         {
-            var dialog = new FolderBrowserDialog();
-            dialog.ShowNewFolderButton = false;
+            var dialog = new FolderBrowserDialog { ShowNewFolderButton = false };
             var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 codeDirectory.Text = dialog.SelectedPath;
             }
         }
 
-        private void checkIfReady(object sender, EventArgs e)
+        private void CheckIfReady(object sender, EventArgs e)
         {
-            if (wpilibFound.Checked && HALBaseFound.Checked && networkTablesFound.Checked && robotFileFound.Checked)
+            if (wpilibFound.Checked && HALBaseFound.Checked && networkTablesFound.Checked && robotFileFound.Checked && connectionManager.Connected && checkedHAL)
             {
                 deployButton.Enabled = true;
             }
@@ -255,5 +345,24 @@ namespace DeployRobot
                 deployButton.Enabled = false;
             }
         }
+
+        private void connectButton_Click(object sender, EventArgs e)
+        {
+            connectButton.Enabled = false;
+            connectionManager.Connect(teamNumber.Text);
+        }
+
+        private void deployButton_Click(object sender, EventArgs e)
+        {
+            deployButton.Enabled = false;
+            deployManager.Deploy(deployFiles);
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+
     }
 }

@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Renci.SshNet;
 using System.IO;
+using Renci.SshNet.Common;
 
 namespace RobotDotNetBuildTasks
 {
-    static class InstallDeployManager
+    public static class InstallDeployManager
     {
         public static bool DeployAndExecuteRobotCode(int teamNumber, string username, string password, DirectoryInfo outputDir)
         {
+            return true;
+            /*
             var connectionInfo = GetWorkingConnectionInfo(teamNumber, username, password);
             if(connectionInfo == null) return false;
             using (ScpClient scp = new ScpClient(connectionInfo))
@@ -25,11 +28,63 @@ namespace RobotDotNetBuildTasks
                 ssh.RunCommand("mono ~/mono/*.exe");
             }
             return true;
+             * */
         }
+
+        public static Dictionary<string, string> RunCommands(string[] commands, ConnectionInfo connectionInfo)
+        {
+            Dictionary<string, string> retCommands = new Dictionary<string, string>();
+            using (SshClient ssh = new SshClient(connectionInfo))
+            {
+                try
+                {
+                    ssh.Connect();
+                }
+                catch (SshOperationTimeoutException ex)
+                {
+
+                }
+                foreach (string s in commands)
+                {
+                    var x = ssh.RunCommand(s);
+                    retCommands.Add(s, x.Result);
+                }
+            }
+            return retCommands;
+        }
+
+        public static bool DeployFiles(string[] files, string deployLocation, ConnectionInfo connectionInfo)
+        {
+            if (connectionInfo == null) return false;
+            using (ScpClient scp = new ScpClient(connectionInfo))
+            {
+                try
+                {
+                    scp.Connect();
+                }
+                catch (SshOperationTimeoutException ex)
+                {
+                    
+                }
+                foreach (string s in files)
+                {
+                    if (File.Exists(s))
+                    {
+                        FileInfo fileInfo = new FileInfo(s);
+                        scp.Upload(fileInfo, deployLocation);
+                    }
+                }
+            }
+            return true;
+        }
+
+
 
         public static bool InstallRuntime(int teamNumber, string username, string password, FileInfo ipkZipFile, FileInfo halRoboRio, FileInfo halImpl)
         {
-            var connectionInfo = GetWorkingConnectionInfo(teamNumber, username, password);
+            ConnectionType type;
+            string ip;
+            var connectionInfo = RoboRIOConnection.CheckConnection(teamNumber.ToString(), out type, out ip);
             if (connectionInfo == null) return false;
             using (ScpClient scp = new ScpClient(connectionInfo))
             using (SshClient ssh = new SshClient(connectionInfo))
@@ -47,26 +102,6 @@ namespace RobotDotNetBuildTasks
             return true;
         }
 
-        private static ConnectionInfo GetWorkingConnectionInfo(int teamNumber, string username, string password)
-        {
-            var authMethod = new PasswordAuthenticationMethod(username, password);
-            var zeroConfConnectionInfo = new ConnectionInfo("roborio-" + teamNumber + ".local", username, authMethod);
-            using (SshClient zeroConfClient = new SshClient(zeroConfConnectionInfo))
-            {
-                zeroConfClient.Connect();
-                if (!zeroConfClient.IsConnected)
-                {
-                    var staticIP = String.Format("10.{0:00}.{1:00}.02", teamNumber / 100, teamNumber % 100);
-                    var staticIPConnectionInfo = new ConnectionInfo(staticIP, username, authMethod);
-                    using (SshClient staticIPClient = new SshClient(staticIPConnectionInfo))
-                    {
-                        staticIPClient.Connect();
-                        if (!staticIPClient.IsConnected) return null;
-                        return staticIPConnectionInfo;
-                    }
-                }
-                return zeroConfConnectionInfo;
-            }
-        } 
+        
     }
 }
