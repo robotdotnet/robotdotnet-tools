@@ -31,7 +31,7 @@ namespace DeployRobot
                 UploadCode();
 
 
-                OnTaskComplete(null);
+                OnTaskComplete();
             });
             t.Start();
             if (blocking)

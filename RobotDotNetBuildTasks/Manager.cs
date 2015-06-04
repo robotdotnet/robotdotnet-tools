@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeployRobot
+namespace RobotDotNetBuildTasks
 {
     public class Manager
     {
-        public event EventHandler TaskComplete;
+        public event Action TaskComplete;
 
-        protected virtual void OnTaskComplete(EventArgs e)
+        protected virtual void OnTaskComplete()
         {
-            EventHandler handler = TaskComplete;
+            Action handler = TaskComplete;
             if (handler != null)
             {
-                handler(this, e);
+                handler();
             }
         }
     }

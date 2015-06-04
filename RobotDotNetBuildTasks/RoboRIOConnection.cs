@@ -24,7 +24,7 @@ namespace RobotDotNetBuildTasks
         public static readonly string ROBO_RIO_USB_IP = "172.22.11.2";
         public static readonly string ROBO_RIO_IP_FORMAT_STRING = "10.{0}.{1}.2";
 
-        public static ConnectionInfo CheckConnection(string teamNumberS, out ConnectionType type, out string conIP)
+        public static ConnectionInfo CheckConnection(string teamNumberS, out ConnectionType type, out string conIP, bool admin)
         {
             int teamNumber = 0;
             int.TryParse(teamNumberS, out teamNumber);
@@ -39,7 +39,7 @@ namespace RobotDotNetBuildTasks
             ConnectionInfo connection = null;
             try
             {
-                connection = GetWorkingConnectionInfo(roboRioMDNS);
+                connection = GetWorkingConnectionInfo(roboRioMDNS, admin);
                 type = ConnectionType.MDNS;
                 conIP = roboRioMDNS;
                 return connection;
@@ -54,7 +54,7 @@ namespace RobotDotNetBuildTasks
             }
             try
             {
-                connection = GetWorkingConnectionInfo(ROBO_RIO_USB_IP);
+                connection = GetWorkingConnectionInfo(ROBO_RIO_USB_IP, admin);
                 type = ConnectionType.USB;
                 conIP = ROBO_RIO_USB_IP;
                 return connection;
@@ -69,7 +69,7 @@ namespace RobotDotNetBuildTasks
             }
             try
             {
-                connection = GetWorkingConnectionInfo(roboRIOIP);
+                connection = GetWorkingConnectionInfo(roboRIOIP, admin);
                 type = ConnectionType.IP;
                 conIP = roboRIOIP;
                 return connection;
@@ -89,14 +89,18 @@ namespace RobotDotNetBuildTasks
         }
 
 
-        private static ConnectionInfo GetWorkingConnectionInfo(string ip)
+        private static ConnectionInfo GetWorkingConnectionInfo(string ip, bool admin)
         {
-            KeyboardInteractiveAuthenticationMethod authMethod = new KeyboardInteractiveAuthenticationMethod("lvuser");
-            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod("lvuser", "");
+            string user = "lvuser";
+            if (admin)
+                user = "admin";
+
+            KeyboardInteractiveAuthenticationMethod authMethod = new KeyboardInteractiveAuthenticationMethod(user);
+            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(user, "");
 
             authMethod.AuthenticationPrompt += HandleEvent;
             //var authMethod = new PasswordAuthenticationMethod(username, password);
-            var zeroConfConnectionInfo = new ConnectionInfo(ip, "lvuser", pauth, authMethod);
+            var zeroConfConnectionInfo = new ConnectionInfo(ip, user, pauth, authMethod);
             zeroConfConnectionInfo.Timeout = TimeSpan.FromSeconds(2);
             using (SshClient zeroConfClient = new SshClient(zeroConfConnectionInfo))
             {

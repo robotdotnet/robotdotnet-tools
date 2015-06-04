@@ -4,18 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Renci.SshNet;
-using RobotDotNetBuildTasks;
 
-namespace DeployRobot
+namespace RobotDotNetBuildTasks
 {
     public class ConnectionManager : Manager
     {
         private string connectionIP;
         private ConnectionType connectionType;
 
-        ConnectionInfo m_connection = null;
+        private ConnectionInfo m_connection = null;
 
         public ConnectionManager()
         {
@@ -42,13 +40,13 @@ namespace DeployRobot
         }
 
 
-        public void Connect(string teamNumber, bool blocking = false)
+        public void Connect(string teamNumber, bool blocking = false, bool admin = false)
         {
             m_connection = null;
             Thread t = new Thread(() =>
             {
-                m_connection = RoboRIOConnection.CheckConnection(teamNumber, out connectionType, out connectionIP);
-                OnTaskComplete(null);
+                m_connection = RoboRIOConnection.CheckConnection(teamNumber, out connectionType, out connectionIP, admin);
+                OnTaskComplete();
             });
 
             t.Start();

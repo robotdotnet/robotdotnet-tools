@@ -85,7 +85,7 @@ namespace RobotDotNetBuildTasks
         {
             ConnectionType type;
             string ip;
-            var connectionInfo = RoboRIOConnection.CheckConnection(teamNumber.ToString(), out type, out ip);
+            var connectionInfo = RoboRIOConnection.CheckConnection(teamNumber.ToString(), out type, out ip, true);
             if (connectionInfo == null) return false;
             using (ScpClient scp = new ScpClient(connectionInfo))
             using (SshClient ssh = new SshClient(connectionInfo))

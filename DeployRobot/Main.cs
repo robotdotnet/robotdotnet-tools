@@ -45,7 +45,6 @@ namespace DeployRobot
             InitializeComponent();
             connectionManager = new ConnectionManager();
             deployManager = new DeployManager(ref connectionManager);
-
             ArgParse.AddArgument("nac", "noautoconnect", false, true, "Use to not autoconnect to Robot.");
             ArgParse.AddArgument("ad", "autodeploy", false, true, "Use to autodeploy code to the robot.");
             ArgParse.AddArgument("team", "teamnumber", false, "Add Team Number");
@@ -156,7 +155,7 @@ namespace DeployRobot
         }
 
 
-        void deployManager_TaskComplete(object sender, EventArgs e)
+        void deployManager_TaskComplete()
         {
             Action action = () =>
             {
@@ -173,7 +172,7 @@ namespace DeployRobot
             deployButton.Invoke(action);
         }
 
-        void connectionManager_TaskComplete(object sender, EventArgs e)
+        void connectionManager_TaskComplete()
         {
             AppendToTop(connectionManager.GetConnectionStatus());
             Action action = () =>
@@ -203,33 +202,6 @@ namespace DeployRobot
             connectionStatus.Invoke(action);
         }
 
-
-
-        static string deployDir = "/home/lvuser";
-        static string monoDeployDir = deployDir + "/mono";
-        static string robotFilename = "robot.exe";
-
-        public void UploadCode()
-        {
-            string deployedCmd;
-            string deployedCmdFrame;
-            string extraCmd;
-            if (cmdArguments.ContainsKey("debug"))
-            {
-                deployedCmd = "env LD_PRELOAD=/lib/libstdc++.so.6.0.20 /usr/local/frc/bin/netconsole-host mono --debug " + monoDeployDir + "/" + robotFilename;
-                deployedCmdFrame = "robotDebugCommand";
-                extraCmd = "touch /tmp/frcdebug; chown lvuser:ni /tmp/frcdebug";
-            }
-            else
-            {
-                deployedCmd = "env LD_PRELOAD=/lib/libstdc++.so.6.0.20 /usr/local/frc/bin/netconsole-host mono " + monoDeployDir + "/" + robotFilename;
-                deployedCmdFrame = "robotCommand";
-                extraCmd = "";
-            }
-
-
-
-        }
         private void codeDirectory_TextChanged(object sender, EventArgs e)
         {
             deployFiles.Clear();
