@@ -31,9 +31,6 @@
             this.teamNumber = new System.Windows.Forms.TextBox();
             this.connectButton = new System.Windows.Forms.Button();
             this.connectionStatus = new System.Windows.Forms.Label();
-            this.halLabel = new System.Windows.Forms.Label();
-            this.halNewestVersion = new System.Windows.Forms.Label();
-            this.updateHAL = new System.Windows.Forms.CheckBox();
             this.deployButton = new System.Windows.Forms.Button();
             this.codeDirectory = new System.Windows.Forms.TextBox();
             this.codeDirectoryButton = new System.Windows.Forms.Button();
@@ -44,6 +41,7 @@
             this.robotFileNameLabel = new System.Windows.Forms.Label();
             this.otherFilesTextBox = new System.Windows.Forms.ListBox();
             this.networkTablesFound = new System.Windows.Forms.CheckBox();
+            this.halRoboRIOFound = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // teamNumber
@@ -71,37 +69,6 @@
             this.connectionStatus.Size = new System.Drawing.Size(100, 13);
             this.connectionStatus.TabIndex = 3;
             this.connectionStatus.Text = "Connection Status: ";
-            // 
-            // halLabel
-            // 
-            this.halLabel.AutoSize = true;
-            this.halLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.halLabel.Location = new System.Drawing.Point(32, 109);
-            this.halLabel.Name = "halLabel";
-            this.halLabel.Size = new System.Drawing.Size(72, 13);
-            this.halLabel.TabIndex = 4;
-            this.halLabel.Text = "HAL Version: ";
-            // 
-            // halNewestVersion
-            // 
-            this.halNewestVersion.AutoSize = true;
-            this.halNewestVersion.Location = new System.Drawing.Point(32, 132);
-            this.halNewestVersion.Name = "halNewestVersion";
-            this.halNewestVersion.Size = new System.Drawing.Size(111, 13);
-            this.halNewestVersion.TabIndex = 5;
-            this.halNewestVersion.Text = "HAL Newest Version: ";
-            // 
-            // updateHAL
-            // 
-            this.updateHAL.AutoSize = true;
-            this.updateHAL.Checked = true;
-            this.updateHAL.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.updateHAL.Location = new System.Drawing.Point(199, 105);
-            this.updateHAL.Name = "updateHAL";
-            this.updateHAL.Size = new System.Drawing.Size(91, 17);
-            this.updateHAL.TabIndex = 6;
-            this.updateHAL.Text = "Update HAL?";
-            this.updateHAL.UseVisualStyleBackColor = true;
             // 
             // deployButton
             // 
@@ -149,9 +116,9 @@
             this.HALBaseFound.Enabled = false;
             this.HALBaseFound.Location = new System.Drawing.Point(191, 189);
             this.HALBaseFound.Name = "HALBaseFound";
-            this.HALBaseFound.Size = new System.Drawing.Size(116, 17);
+            this.HALBaseFound.Size = new System.Drawing.Size(113, 17);
             this.HALBaseFound.TabIndex = 11;
-            this.HALBaseFound.Text = "HAL_Base Found?";
+            this.HALBaseFound.Text = "HAL-Base Found?";
             this.HALBaseFound.UseVisualStyleBackColor = true;
             // 
             // otherFileLabel
@@ -195,12 +162,23 @@
             // 
             this.networkTablesFound.AutoSize = true;
             this.networkTablesFound.Enabled = false;
-            this.networkTablesFound.Location = new System.Drawing.Point(191, 212);
+            this.networkTablesFound.Location = new System.Drawing.Point(191, 235);
             this.networkTablesFound.Name = "networkTablesFound";
             this.networkTablesFound.Size = new System.Drawing.Size(140, 17);
             this.networkTablesFound.TabIndex = 11;
             this.networkTablesFound.Text = "Network Tables Found?";
             this.networkTablesFound.UseVisualStyleBackColor = true;
+            // 
+            // halRoboRIOFound
+            // 
+            this.halRoboRIOFound.AutoSize = true;
+            this.halRoboRIOFound.Enabled = false;
+            this.halRoboRIOFound.Location = new System.Drawing.Point(191, 212);
+            this.halRoboRIOFound.Name = "halRoboRIOFound";
+            this.halRoboRIOFound.Size = new System.Drawing.Size(134, 17);
+            this.halRoboRIOFound.TabIndex = 11;
+            this.halRoboRIOFound.Text = "HAL-RoboRIO Found?";
+            this.halRoboRIOFound.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -211,15 +189,13 @@
             this.Controls.Add(this.robotFileNameLabel);
             this.Controls.Add(this.otherFileLabel);
             this.Controls.Add(this.networkTablesFound);
+            this.Controls.Add(this.halRoboRIOFound);
             this.Controls.Add(this.HALBaseFound);
             this.Controls.Add(this.robotFileFound);
             this.Controls.Add(this.wpilibFound);
             this.Controls.Add(this.codeDirectoryButton);
             this.Controls.Add(this.codeDirectory);
             this.Controls.Add(this.deployButton);
-            this.Controls.Add(this.updateHAL);
-            this.Controls.Add(this.halNewestVersion);
-            this.Controls.Add(this.halLabel);
             this.Controls.Add(this.connectionStatus);
             this.Controls.Add(this.connectButton);
             this.Controls.Add(this.teamNumber);
@@ -237,9 +213,6 @@
         private System.Windows.Forms.TextBox teamNumber;
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Label connectionStatus;
-        private System.Windows.Forms.Label halLabel;
-        private System.Windows.Forms.Label halNewestVersion;
-        private System.Windows.Forms.CheckBox updateHAL;
         private System.Windows.Forms.Button deployButton;
         private System.Windows.Forms.TextBox codeDirectory;
         private System.Windows.Forms.Button codeDirectoryButton;
@@ -250,6 +223,7 @@
         private System.Windows.Forms.Label robotFileNameLabel;
         private System.Windows.Forms.ListBox otherFilesTextBox;
         private System.Windows.Forms.CheckBox networkTablesFound;
+        private System.Windows.Forms.CheckBox halRoboRIOFound;
     }
 }
 

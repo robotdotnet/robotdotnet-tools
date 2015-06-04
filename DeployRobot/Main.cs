@@ -18,7 +18,7 @@ namespace DeployRobot
 {
     public partial class Main : Form
     {
-        Dictionary<string, string> cmdArguments;
+        public static Dictionary<string, string> cmdArguments;
 
         const string TEAM_NUMBER_FILE = "team.txt";
 
@@ -27,15 +27,17 @@ namespace DeployRobot
         DeployFile robotFile;
         DeployFile WPILibFile;
         DeployFile HALBaseFile;
+        DeployFile HALRoboRIOFile;
         DeployFile NetworkTablesFile;
 
         private ConnectionManager connectionManager;
         private DeployManager deployManager;
-        private HALManager halManager;
-
-        private bool checkedHAL = false;
 
         public static RichTextBox statusWindow;
+
+        public static string RobotName = "Robot.exe";
+
+        
 
 
         public Main()
@@ -43,14 +45,13 @@ namespace DeployRobot
             InitializeComponent();
             connectionManager = new ConnectionManager();
             deployManager = new DeployManager(ref connectionManager);
-            halManager = new HALManager(ref connectionManager);
 
             ArgParse.AddArgument("nac", "noautoconnect", false, true, "Use to not autoconnect to Robot.");
             ArgParse.AddArgument("ad", "autodeploy", false, true, "Use to autodeploy code to the robot.");
-            ArgParse.AddArgument("hal", "skip-hal", false, true, "Use to check skip the check for the newest HAL Version.");
             ArgParse.AddArgument("team", "teamnumber", false, "Add Team Number");
             ArgParse.AddArgument("debug", "debug", false, "Weither to run debug.");
             ArgParse.AddArgument("loc", "filelocation", false, false, "Robot code location");
+            ArgParse.AddArgument("nc", "netconsole", false, true,"Start netconsole or not?");
 
             string[] args = Environment.GetCommandLineArgs();
 
@@ -79,8 +80,7 @@ namespace DeployRobot
             networkTablesFound.CheckedChanged += CheckIfReady;
             HALBaseFound.CheckedChanged += CheckIfReady;
             robotFileFound.CheckedChanged += CheckIfReady;
-            connectionStatus.TextChanged += CheckIfReady;
-            updateHAL.CheckedChanged += CheckIfReady;
+            //connectionStatus.TextChanged += CheckIfReady;
 
             
 
@@ -112,7 +112,6 @@ namespace DeployRobot
              * */
             connectionManager.TaskComplete += connectionManager_TaskComplete;
             deployManager.TaskComplete += deployManager_TaskComplete;
-            halManager.TaskComplete += halManager_TaskComplete;
 
             this.SuspendLayout();
             statusWindow = new RichTextBox();
@@ -156,36 +155,6 @@ namespace DeployRobot
             AppendToTop(cmdArguments["filelocation"]);
         }
 
-        void halManager_TaskComplete(object sender, EventArgs e)
-        {
-            
-            Action action = () =>
-            {
-                string hal = "HAL Version: ";
-                if (halManager.Matches)
-                {
-                    hal += halManager.HALVersion;
-                    halNewestVersion.Text = "HAL Newest Version: True";
-                    updateHAL.Checked = false;
-                }
-                else
-                {
-                    hal += "Not Found";
-                    halNewestVersion.Text = "HAL Newest Version: False";
-                    updateHAL.Checked = true;
-                }
-                halLabel.Text = hal;
-                checkedHAL = true;
-
-                AppendToTop(halManager.GetHALStatus());
-
-                CheckIfReady(null, null);
-
-                
-            };
-            halLabel.Invoke(action);
-
-        }
 
         void deployManager_TaskComplete(object sender, EventArgs e)
         {
@@ -207,8 +176,6 @@ namespace DeployRobot
         void connectionManager_TaskComplete(object sender, EventArgs e)
         {
             AppendToTop(connectionManager.GetConnectionStatus());
-            if (connectionManager.Connected)
-                halManager.CheckHALVersion(1.0, 326);
             Action action = () =>
             {
                 string connectionString = "Connection Status: ";
@@ -230,6 +197,8 @@ namespace DeployRobot
 
 
                 connectButton.Enabled = true;
+
+                CheckIfReady(null, null);
             };
             connectionStatus.Invoke(action);
         }
@@ -269,6 +238,7 @@ namespace DeployRobot
             wpilibFound.Checked = false;
             networkTablesFound.Checked = false;
             robotFileFound.Checked = false;
+            halRoboRIOFound.Checked = false;
             robotFileNameLabel.Text = "None";
             otherFilesTextBox.DataSource = null;
             otherFilesTextBox.DataSource = otherFiles;
@@ -277,13 +247,13 @@ namespace DeployRobot
             if (Directory.Exists(codeDirectory.Text))
             {
                 //Find Robot Base first (This is so we can figure out the executable.
-                Type m_robotBase;
+                Type robotBase;
                 if (File.Exists(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll"))
                 {
                     var wpilib = Assembly.LoadFrom(codeDirectory.Text + Path.DirectorySeparatorChar + "WPILib.dll");
                     try
                     {
-                        m_robotBase = wpilib.GetType("WPILib.RobotBase", true);
+                        robotBase = wpilib.GetType("WPILib.RobotBase", true);
                     }
                     catch
                     {
@@ -312,7 +282,7 @@ namespace DeployRobot
                         //Load Assembly, in order to find the main robot file.
                         var asm = Assembly.LoadFrom(f);
 
-                        var classes = from t in asm.GetTypes() where m_robotBase.IsAssignableFrom(t) select t;
+                        var classes = from t in asm.GetTypes() where robotBase.IsAssignableFrom(t) select t;
                         //if no class extending from RobotBase was found, include it as a normal file
                         if (classes.ToList().Count == 0)
                         {
@@ -328,6 +298,7 @@ namespace DeployRobot
                             robotFileFound.Checked = true;
                             var split = f.Split(Path.DirectorySeparatorChar);
                             robotFileNameLabel.Text = split[split.Length - 1];
+                            RobotName = robotFileNameLabel.Text;
                             deployFiles.Add(robotFile);
                         }
 
@@ -359,6 +330,14 @@ namespace DeployRobot
                             NetworkTablesFile = new DeployFile(f, true, false);
                             networkTablesFound.Checked = true;
                             deployFiles.Add(NetworkTablesFile);
+                            continue;
+                        }
+                        if (f.Contains("HAL-RoboRIO.dll"))
+                        {
+                            AppendToTop("Found HAL RoboRIO");
+                            HALRoboRIOFile = new DeployFile(f, true, false);
+                            halRoboRIOFound.Checked = true;
+                            deployFiles.Add(HALRoboRIOFile);
                             continue;
                         }
                         if (f.Contains("HAL"))
@@ -402,7 +381,7 @@ namespace DeployRobot
 
         private void CheckIfReady(object sender, EventArgs e)
         {
-            if (wpilibFound.Checked && HALBaseFound.Checked && networkTablesFound.Checked && robotFileFound.Checked && connectionManager.Connected && checkedHAL)
+            if (wpilibFound.Checked && HALBaseFound.Checked && networkTablesFound.Checked && robotFileFound.Checked && connectionManager.Connected && halRoboRIOFound.Checked)
             {
                 deployButton.Enabled = true;
                 if (cmdArguments.ContainsKey("autodeploy"))
@@ -439,7 +418,7 @@ namespace DeployRobot
         {
             Action action = () =>
             {
-                statusWindow.AppendText(message + "\n");// + statusWindow.Text;
+                statusWindow.AppendText(message + "\n");
             };
             statusWindow.Invoke(action);
         }

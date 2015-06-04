@@ -51,7 +51,6 @@
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="DeployFile.cs" />
     <Compile Include="DeployManager.cs" />
-    <Compile Include="HALManager.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>

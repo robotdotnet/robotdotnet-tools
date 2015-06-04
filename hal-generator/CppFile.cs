@@ -50,6 +50,10 @@ namespace hal_generator
                             break;
                         if (m_fileRead[i].Contains("extern const"))
                             continue;
+                        if (m_fileRead[i].Contains("#ifdef"))
+                            continue;
+                        if (m_fileRead[i].Contains("#endif"))
+                            continue;
                         if (m_fileRead[i].Contains("typedef void (*InterruptHandlerFunction)"))
                             continue;
                         if (m_fileRead[i].Trim() == "")

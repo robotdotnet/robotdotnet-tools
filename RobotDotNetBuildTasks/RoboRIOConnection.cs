@@ -91,12 +91,12 @@ namespace RobotDotNetBuildTasks
 
         private static ConnectionInfo GetWorkingConnectionInfo(string ip)
         {
-            KeyboardInteractiveAuthenticationMethod authMethod = new KeyboardInteractiveAuthenticationMethod("admin");
-            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod("admin", "");
+            KeyboardInteractiveAuthenticationMethod authMethod = new KeyboardInteractiveAuthenticationMethod("lvuser");
+            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod("lvuser", "");
 
             authMethod.AuthenticationPrompt += HandleEvent;
             //var authMethod = new PasswordAuthenticationMethod(username, password);
-            var zeroConfConnectionInfo = new ConnectionInfo(ip, "admin", pauth, authMethod);
+            var zeroConfConnectionInfo = new ConnectionInfo(ip, "lvuser", pauth, authMethod);
             zeroConfConnectionInfo.Timeout = TimeSpan.FromSeconds(2);
             using (SshClient zeroConfClient = new SshClient(zeroConfConnectionInfo))
             {
