@@ -21,18 +21,19 @@ namespace NetFRC
 
         private ConnectionManager connectionManager;
 
-        public static Dictionary<string, string> downloadedVersions = new Dictionary<string, string>();
-        public static Dictionary<string, string> preDownloadedVersions = new Dictionary<string, string>();
-        public static Dictionary<string, string> currentVersions = new Dictionary<string, string>();
+        //public static Dictionary<string, string> downloadedVersions = new Dictionary<string, string>();
+        //public static Dictionary<string, string> preDownloadedVersions = new Dictionary<string, string>();
+        //public static Dictionary<string, string> currentVersions = new Dictionary<string, string>();
 
-        public static readonly string dlFileLocation = "Downloads" + Path.DirectorySeparatorChar + "newestversions.txt";
+        //public static readonly string dlFileLocation = "Downloads" + Path.DirectorySeparatorChar + "newestversions.txt";
 
-        public static readonly string preDLFileLocation = "Downloads" + Path.DirectorySeparatorChar + "preversions.txt";
+        //public static readonly string preDLFileLocation = "Downloads" + Path.DirectorySeparatorChar + "preversions.txt";
 
         public static string DeployRobotLocation;
 
         public Main()
         {
+            /*
             DeployRobotLocation = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) +
                                   Path.DirectorySeparatorChar + "wpilib" + Path.DirectorySeparatorChar + "dotnet" +
                                   Path.DirectorySeparatorChar + "tools";
@@ -40,12 +41,11 @@ namespace NetFRC
             {
                 Directory.CreateDirectory(DeployRobotLocation);
             }
-
+            */
+            
             InitializeComponent();
 
-
-            //Load team file if it exists.
-
+            connectionManager = new ConnectionManager();
             connectionManager.TaskComplete += connectionManager_TaskComplete;
 
             this.SuspendLayout();
@@ -57,6 +57,7 @@ namespace NetFRC
             statusWindow.Size = new System.Drawing.Size(374, 281);
             statusWindow.TabIndex = 16;
             statusWindow.Text = "";
+            statusWindow.HideSelection = false;
 
             this.Controls.Add(statusWindow);
             this.ResumeLayout(false);
@@ -65,176 +66,66 @@ namespace NetFRC
             if (!Directory.Exists("Downloads"))
                 Directory.CreateDirectory("Downloads");
 
-            connectionManager.Connect("4488", false, true);
-            StartGetVersions();
+
+            //Down
+            //connectionManager.Connect("4488", false, true);
+            
+
         }
 
-        public void StartDownloadMono()
+        private void Main_Load(object sender, EventArgs e)
         {
-            new Thread(() =>
-            {
-                //Start Here
-
-
-
-                MonoDownloadComplete();
-            }).Start();
+            DownloadedVersions.Start(DownloadedVersionsCallback);
         }
 
-        public void MonoDownloadComplete()
+        public void CheckHAL()
+        {
+            if (connectionManager.Connected && DownloadedVersions.Versions.ContainsKey("HAL"))
+            {
+                halInstallButton.Enabled = true;
+            }
+        }
+
+        public void DownloadedVersionsCallback()
+        {
+            Action action = () =>
+                {
+                    halDownloadedVersionLabel.Text = "Downloaded Version: None";
+                    //Do other 4 labels
+                    if(DownloadedVersions.Versions.ContainsKey("HAL"))
+                    {
+                        halDownloadedVersionLabel.Text = "Downloaded Version: " + DownloadedVersions.Versions["HAL"];
+                        //halInstallButton.Enabled = true;
+                        CheckHAL();
+                    }
+                };
+            this.Invoke(action);
+            
+        }
+
+        public void RecommendedVersionsCallback()
         {
             Action action = () =>
             {
-
-            };
-            //Invoke an object here.
-        }
-
-        public void StartHalDownload()
-        {
-            new Thread(() =>
-            {
-                //Start Here
-
-
-
-                HalDownloadComplete();
-            }).Start();
-        }
-
-        public void HalDownloadComplete()
-        {
-            Action action = () =>
-            {
-
-            };
-            //Invoke an object here.
-        }
-
-        public void StartGetVersions()
-        {
-            new Thread(() =>
-            {
-                //Start Here
-                using (var client = new WebClient())
+                if (RecommendedVersions.Versions.ContainsKey("HAL"))
                 {
-                    client.DownloadFile(
-                        "https://raw.githubusercontent.com/robotdotnet/robotdotnet-wpilib/master/version.txt",
-                        dlFileLocation);
-                }
-                GetVersionsComplete();
-            }).Start();
-        }
-
-        public void GetVersionsComplete()
-        {
-            Action action = () =>
-            {
-                if (File.Exists(dlFileLocation))
-                {
-                    foreach (var split in File.ReadAllLines(dlFileLocation).Select(l => l.Split(':')).Where(split => split.Length >= 2))
-                    {
-                        downloadedVersions.Add(split[0], split[1]);
-                    }
+                    halRecommendedVersionLabel.Text = "Recommended Version: " + RecommendedVersions.Versions["HAL"];
+                    halDownloadButton.Enabled = true;
                 }
             };
-            //Gonna need strings
+            this.Invoke(action);
         }
-
-        public void StartCheckPreDownloadedVersions()
-        {
-            new Thread(() =>
-            {
-                if (File.Exists(preDLFileLocation))
-                {
-                    foreach (var split in File.ReadAllLines(preDLFileLocation).Select(l => l.Split(':')).Where(split => split.Length >= 2))
-                    {
-                        preDownloadedVersions.Add(split[0], split[1]);
-                    }
-                }
-            }).Start();
-        }
-
-        public void CheckPreDownloadedVersions()
-        {
-
-        }
-
-        public void StartCheckLocalVersion()
-        {
-            new Thread(() =>
-            {
-                //Get Deploy Robot Version
-                string deployFileName = DeployRobotLocation + Path.DirectorySeparatorChar + "deployrobot.exe";
-                if (File.Exists(deployFileName))
-                {
-                    var deploytool = Assembly.LoadFrom(deployFileName).GetName();
-                    currentVersions["Deploy"] = deploytool.Version.ToString();
-                }
-
-                //Get Template Version
-                string templateFileName = DeployRobotLocation + Path.DirectorySeparatorChar + "templatever.txt";
-                if (File.Exists(templateFileName))
-                {
-                    var file = File.ReadAllLines(templateFileName);
-                    if (file.Length >= 1)
-                    {
-                        currentVersions["Template"] = file[0];
-                    }
-                }
-
-                CheckLocalVersionsComplete();
-            }).Start();
-        }
+        
+        
 
         public void CheckLocalVersionsComplete()
         {
 
         }
 
-        public void StartCheckRIOVersions()
-        {
-            new Thread(() =>
-            {
-                if (connectionManager.Connected)
-                {
-                    string[] sent = { "cat /home/lvuser/mono/version", "mono --version" };
-                    var rioVersionDict = InstallDeployManager.RunCommands(sent, connectionManager.Connection);
-                    var split = rioVersionDict[sent[0]].Split(':');
-                    if (split[0] == "HAL")
-                        currentVersions["HAL"] = rioVersionDict[sent[0]].Trim();
-
-                    split = rioVersionDict[sent[1]].Split(' ');
-                    if (split[0] == "Mono")
-                    {
-                        currentVersions["Mono"] = split[4];
-                    }
-                }
-
-
-                CheckRIOVersionsComplete();
-            }).Start();
-        }
-
         public void CheckRIOVersionsComplete()
         {
-            Action action = () =>
-            {
 
-            };
-            //Invoke an object here.
-        }
-
-
-        bool preDownloadedChecked = false;
-        bool downloadedChecked = false;
-        bool RIOChecked = false;
-        public void CheckAllVersion()
-        {
-            if (preDownloadedChecked && downloadedChecked && RIOChecked)
-            {
-
-            }
         }
 
 
@@ -265,8 +156,9 @@ namespace NetFRC
                 connectButton.Enabled = true;
 
 
-                StartCheckRIOVersions();
-
+                //StartCheckRIOVersions();
+                LocalVersions.StartRIO(CheckRIOVersionsComplete, connectionManager);
+                CheckHAL();
                 //EnableConnections(connectionManager.Connected);
             };
 
@@ -275,7 +167,7 @@ namespace NetFRC
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-
+            connectionManager.Connect(teamNumber.Text, false, true);
         }
 
         public static void AppendToStatus(string message)
@@ -286,5 +178,37 @@ namespace NetFRC
             };
             statusWindow.Invoke(action);
         }
+
+        private void halDownloadButton_Click(object sender, EventArgs e)
+        {
+            
+            halDownloadButton.Enabled = false;
+            halInstallButton.Enabled = false;
+            DownloadManager.DownloadHAL(HALDownloadComplete, RecommendedVersions.Versions["HAL"]);
+        }
+
+        public void HALDownloadComplete()
+        {
+            Action action = () =>
+                {
+                    AppendToStatus("HAL Download Complete");
+                    DownloadedVersions.Start(DownloadedVersionsCallback);
+                    halDownloadButton.Enabled = true;
+                    CheckHAL();
+                };
+            Invoke(action);
+        }
+
+        private void halInstallButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void getRecommendVersionsButton_Click(object sender, EventArgs e)
+        {
+            RecommendedVersions.Start(RecommendedVersionsCallback);
+        }
+
+        
     }
 }
