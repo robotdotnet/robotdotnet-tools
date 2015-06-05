@@ -80,24 +80,80 @@ namespace NetFRC
 
         public void CheckHAL()
         {
-            if (connectionManager.Connected && DownloadedVersions.Versions.ContainsKey("HAL"))
+            if (connectionManager.Connected && (DownloadedVersions.GetHAL() != null))
             {
                 halInstallButton.Enabled = true;
             }
         }
+
+        public void CheckMono()
+        {
+            if (connectionManager.Connected && (DownloadedVersions.GetMono() != null))
+            {
+                monoInstallButton.Enabled = true;
+            }
+        }
+
+        public void CheckTemplate()
+        {
+            if (connectionManager.Connected && (DownloadedVersions.GetTemplate() != null))
+            {
+                templateInstallButton.Enabled = true;
+            }
+        }
+
+        public void CheckDeploy()
+        {
+            if (connectionManager.Connected && (DownloadedVersions.GetDeploy() != null))
+            {
+                deployInstallButton.Enabled = true;
+            }
+        }
+
+
 
         public void DownloadedVersionsCallback()
         {
             Action action = () =>
                 {
                     halDownloadedVersionLabel.Text = "Downloaded Version: None";
+                    monoDownloadedLabel.Text = "Downloaded Version: None";
+                    tempDLLabel.Text = "Downloaded Version: None";
+                    deployDLLabel.Text = "Downloaded Version: None";
                     //Do other 4 labels
-                    if(DownloadedVersions.Versions.ContainsKey("HAL"))
+
+                    var dl = DownloadedVersions.GetHAL();
+                    if(dl != null)
                     {
-                        halDownloadedVersionLabel.Text = "Downloaded Version: " + DownloadedVersions.Versions["HAL"];
+                        halDownloadedVersionLabel.Text = "Downloaded Version: " + dl;
                         //halInstallButton.Enabled = true;
                         CheckHAL();
                     }
+
+                    dl = DownloadedVersions.GetMono();
+                    if (dl != null)
+                    {
+                        monoDownloadedLabel.Text = "Downloaded Version: " + dl;
+                        //halInstallButton.Enabled = true;
+                        CheckMono();
+                    }
+
+                    dl = DownloadedVersions.GetTemplate();
+                    if (dl != null)
+                    {
+                        tempDLLabel.Text = "Downloaded Version: " + dl;
+                        //halInstallButton.Enabled = true;
+                        CheckTemplate();
+                    }
+
+                    dl = DownloadedVersions.GetDeploy();
+                    if (dl != null)
+                    {
+                        deployDLLabel.Text = "Downloaded Version: " + dl;
+                        //halInstallButton.Enabled = true;
+                        CheckDeploy();
+                    }
+
                 };
             this.Invoke(action);
             
@@ -107,10 +163,37 @@ namespace NetFRC
         {
             Action action = () =>
             {
-                if (RecommendedVersions.Versions.ContainsKey("HAL"))
+                halRecommendedVersionLabel.Text = "Recommended Version: None";
+                monoRecommendedLabel.Text = "Recommended Version: None";
+                tempRecLabel.Text = "Recommended Version: None";
+                deployRecLabel.Text = "Recommended Version: None";
+
+                var rec = RecommendedVersions.GetHAL();
+                if (rec != null)
                 {
-                    halRecommendedVersionLabel.Text = "Recommended Version: " + RecommendedVersions.Versions["HAL"];
+                    halRecommendedVersionLabel.Text = "Recommended Version: " + rec;
                     halDownloadButton.Enabled = true;
+                }
+
+                rec = RecommendedVersions.GetMono();
+                if (rec != null)
+                {
+                    monoRecommendedLabel.Text = "Recommended Version: " + rec;
+                    monoDLButton.Enabled = true;
+                }
+
+                rec = RecommendedVersions.GetTemplate();
+                if (rec != null)
+                {
+                    tempRecLabel.Text = "Recommended Version: " + rec;
+                    templateDLButton.Enabled = true;
+                }
+
+                rec = RecommendedVersions.GetDeploy();
+                if (rec != null)
+                {
+                    deployRecLabel.Text = "Recommended Version: " + rec;
+                    deployDLButton.Enabled = true;
                 }
             };
             this.Invoke(action);
@@ -125,7 +208,23 @@ namespace NetFRC
 
         public void CheckRIOVersionsComplete()
         {
+            Action action = () =>
+            {
+                halCurrentLabel.Text = "Currently Installed Version: None";
+                var locHAL = LocalVersions.GetHAL();
+                if (locHAL != null)
+                {
+                    halCurrentLabel.Text = "Currently Installed Version: " + locHAL;
+                }
 
+                monoInstalledLabed.Text = "Currently Installed Version: None";
+                var locMono = LocalVersions.GetMono();
+                if (locMono != null)
+                {
+                    monoInstalledLabed.Text = "Currently Installed Version: " + locMono;
+                }
+            };
+            Invoke(action);
         }
 
 
@@ -167,6 +266,7 @@ namespace NetFRC
 
         private void connectButton_Click(object sender, EventArgs e)
         {
+            AppendToStatus("Connecting to RoboRIO");
             connectionManager.Connect(teamNumber.Text, false, true);
         }
 
@@ -181,10 +281,9 @@ namespace NetFRC
 
         private void halDownloadButton_Click(object sender, EventArgs e)
         {
-            
             halDownloadButton.Enabled = false;
             halInstallButton.Enabled = false;
-            DownloadManager.DownloadHAL(HALDownloadComplete, RecommendedVersions.Versions["HAL"]);
+            DownloadManager.DownloadHAL(HALDownloadComplete, RecommendedVersions.GetHAL());
         }
 
         public void HALDownloadComplete()
@@ -201,12 +300,78 @@ namespace NetFRC
 
         private void halInstallButton_Click(object sender, EventArgs e)
         {
+            AppendToStatus("Installing HAL");
+            halInstallButton.Enabled = false;
+            new Thread(() =>
+            {
+                List<string> deploy = new List<string>();
+                deploy.Add("Downloads" + Path.DirectorySeparatorChar + "HAL" + Path.DirectorySeparatorChar +
+                           "libHALAthena_shared.so");
+                InstallDeployManager.DeployFiles(deploy.ToArray(), "/home/lvuser/mono", connectionManager.Connection);
+                deploy.Clear();
+                deploy.Add("rm /home/lvuser/mono/version");
+                deploy.Add("echo HAL:" + DownloadedVersions.GetHAL() + "> /home/lvuser/mono/version");
+                InstallDeployManager.RunCommands(deploy.ToArray(), connectionManager.Connection);
+                LocalVersions.StartRIO(CheckRIOVersionsComplete, connectionManager);
+                HALInstallFinished();
+            }).Start();
+        }
 
+        public void HALInstallFinished()
+        {
+            Action action = () =>
+            {
+                AppendToStatus("Successfully Deployed HAL");
+                halInstallButton.Enabled = true;
+            };
+            this.Invoke(action);
         }
 
         private void getRecommendVersionsButton_Click(object sender, EventArgs e)
         {
             RecommendedVersions.Start(RecommendedVersionsCallback);
+        }
+
+        private void monoDLButton_Click(object sender, EventArgs e)
+        {
+            monoDLButton.Enabled = false;
+            monoInstallButton.Enabled = false;
+            DownloadManager.DownloadMono(MonoDownloadComplete);
+        }
+
+        private void MonoDownloadComplete()
+        {
+            Action action = () =>
+            {
+                AppendToStatus("Mono Download Complete");
+
+            };
+            action();
+        }
+
+        private void monoInstallButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void templateDLButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void templateInstallButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void deployDLButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void deployInstallButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         

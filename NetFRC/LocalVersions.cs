@@ -13,11 +13,6 @@ namespace NetFRC
     {
         private static Dictionary<string, string> versions = new Dictionary<string, string>();
 
-        public static Dictionary<string,string> Versions
-        {
-            get { return versions; }
-        }
-
 
         public static void StartRIO(Action callback, ConnectionManager connectionManager)
         {
@@ -29,18 +24,74 @@ namespace NetFRC
                     var rioVersionDict = InstallDeployManager.RunCommands(sent, connectionManager.Connection);
                     var split = rioVersionDict[sent[0]].Split(':');
                     if (split[0] == "HAL")
-                        versions["HAL"] = rioVersionDict[sent[0]].Trim();
+                        versions["HAL"] = split[1].Trim().Replace(@"\n", "");
 
                     split = rioVersionDict[sent[1]].Split(' ');
                     if (split[0] == "Mono")
                     {
-                        versions["Mono"] = split[4];
+                        versions["MONO"] = split[4];
                     }
                 }
 
 
                 callback();
             }).Start();
+        }
+
+        private static bool FoundHAL()
+        {
+            return versions.ContainsKey("HAL");
+        }
+
+        private static bool FoundDeploy()
+        {
+            return versions.ContainsKey("DEPLOY");
+        }
+
+        private static bool FoundTemplate()
+        {
+            return versions.ContainsKey("TEMPLATE");
+        }
+
+        private static bool FoundMono()
+        {
+            return versions.ContainsKey("MONO");
+        }
+
+        public static string GetHAL()
+        {
+            if (FoundHAL())
+            {
+                return versions["HAL"];
+            }
+            return null;
+        }
+
+        public static string GetDeploy()
+        {
+            if (FoundDeploy())
+            {
+                return versions["DEPLOY"];
+            }
+            return null;
+        }
+
+        public static string GetTemplate()
+        {
+            if (FoundTemplate())
+            {
+                return versions["TEMPLATE"];
+            }
+            return null;
+        }
+
+        public static string GetMono()
+        {
+            if (FoundMono())
+            {
+                return versions["MONO"];
+            }
+            return null;
         }
     }
 }
