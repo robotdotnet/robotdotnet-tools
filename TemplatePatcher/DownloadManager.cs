@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace TemplatePatcher
 {
+    [System.ComponentModel.DesignerCategory("")]
     class DownloadManager
     {
         public static string WPIVersion = "";
@@ -19,11 +20,17 @@ namespace TemplatePatcher
         {
             new Thread(() =>
             {
+                const string dlLocation = "FRC Robot Templates\\packages\\WPILib.nupkg";
                 CustomWebClient client = new CustomWebClient();
-                client.DownloadFile("https://www.myget.org/F/robotdotnet/api/v2/package/WPILib/", "FRC Robot Templates\\packages\\WPILib.nupkg");
+                client.DownloadFile("https://www.myget.org/F/robotdotnet/api/v2/package/WPILib/", dlLocation);
                 try
                 {
                     WPIVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
+                    if (File.Exists(dlLocation.Replace(".nupkg", "." + WPIVersion + ".nupkg")))
+                    {
+                        File.Delete(dlLocation.Replace(".nupkg", "." + WPIVersion + ".nupkg"));
+                    }
+                    File.Move(dlLocation, dlLocation.Replace(".nupkg", "." + WPIVersion + ".nupkg"));
                 }
                 catch (IndexOutOfRangeException e)
                 {
@@ -35,12 +42,18 @@ namespace TemplatePatcher
 
         public static void GetNewestNT(Action OnComplete)
         {new Thread(() =>
-            {
+        {
+            const string dlLocation = "FRC Robot Templates\\packages\\NetworkTablesDotNet.nupkg";
                 CustomWebClient client = new CustomWebClient();
-                client.DownloadFile(new Uri("https://www.myget.org/F/robotdotnet/api/v2/package/NetworkTablesDotNet/"), "FRC Robot Templates\\packages\\NetworkTablesDotNet.nupkg");
+                client.DownloadFile(new Uri("https://www.myget.org/F/robotdotnet/api/v2/package/NetworkTablesDotNet/"), dlLocation);
                 try
                 {
                     NTVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
+                    if (File.Exists(dlLocation.Replace(".nupkg", "." + NTVersion + ".nupkg")))
+                    {
+                        File.Delete(dlLocation.Replace(".nupkg", "." + NTVersion + ".nupkg"));
+                    }
+                    File.Move(dlLocation, dlLocation.Replace(".nupkg", "." + NTVersion +".nupkg"));
                 }
                 catch (IndexOutOfRangeException e)
                 {
@@ -51,6 +64,7 @@ namespace TemplatePatcher
         }
     }
 
+    [System.ComponentModel.DesignerCategory("")]
     internal class CustomWebClient : WebClient
     {
         private Uri m_uri;

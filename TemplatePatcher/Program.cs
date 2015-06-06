@@ -22,6 +22,7 @@ namespace TemplatePatcher
         static bool dlNT = false;
 
         private static List<TemplateManager> templateFiles = new List<TemplateManager>();
+        private static TemplateProjectPatcher patcher = null;
 
         static void Main(string[] args)
         {
@@ -30,15 +31,18 @@ namespace TemplatePatcher
             string ver = Console.ReadLine();
             Console.CursorVisible = false;
 
-            new Thread(() =>
+            if (File.Exists("FRC Robot Templates\\source.extension.vsixmanifest"))
             {
-                VSIXManager vsix = new VSIXManager("FRC Robot Templates\\source.extension.vsixmanifest");
-                Console.WriteLine("Replacing VSIX Version to " + ver);
-                vsix.ReplaceVersion(ver);
-                Console.WriteLine("Writing VSIX File");
-                vsix.WriteFile();
-                Console.WriteLine("Sucessfully Wrote VSIX File");
-            }).Start();
+                new Thread(() =>
+                {
+                    VSIXManager vsix = new VSIXManager("FRC Robot Templates\\source.extension.vsixmanifest");
+                    Console.WriteLine("Replacing VSIX Version to " + ver);
+                    vsix.ReplaceVersion(ver);
+                    Console.WriteLine("Writing VSIX File");
+                    vsix.WriteFile();
+                    Console.WriteLine("Sucessfully Wrote VSIX File");
+                }).Start();
+            }
 
             foreach (var s in Directory.EnumerateFiles("CSharp\\Project Templates", "*.vstemplate", SearchOption.AllDirectories))
             {
@@ -46,6 +50,8 @@ namespace TemplatePatcher
                 templateFiles.Add(new TemplateManager(s));
             }
 
+            if (File.Exists("FRC Robot Templates\\FRC Robot Templates.csproj"))
+                patcher = new TemplateProjectPatcher("FRC Robot Templates\\FRC Robot Templates.csproj");
 
             //manager = new TemplateManager("IterativeRobot.vstemplate");
             Console.WriteLine("Downloading WPILib");
@@ -64,6 +70,11 @@ namespace TemplatePatcher
                 Console.WriteLine("Writing " + s.FilePath);
                 s.WriteFile();
             }
+            if (patcher != null)
+            {
+                Console.WriteLine("Writing CSProj file");
+                patcher.WriteFile();
+            }
             Console.WriteLine("Sucessfully wrote template files.");
         }
 
@@ -77,6 +88,11 @@ namespace TemplatePatcher
                 {
                     Console.WriteLine("Updating NetworkTables Version in " + s.FilePath + " to " + NTVersion);
                     s.UpdateNT(NTVersion);
+                }
+                if (patcher != null)
+                {
+                    Console.WriteLine("Updating NetworkTables Version in CSProj file.");
+                    patcher.UpdateNT(NTVersion);
                 }
                 dlNT = true;
             }
@@ -92,6 +108,11 @@ namespace TemplatePatcher
                 {
                     Console.WriteLine("Updating WPILib Version in " + s.FilePath + " to " + WPIVersion);
                     s.UpdateWPI(WPIVersion);
+                }
+                if (patcher != null)
+                {
+                    Console.WriteLine("Updating WPILib Version in CSProj file.");
+                    patcher.UpdateWPI(WPIVersion);
                 }
                 dlWPI = true;
             }
