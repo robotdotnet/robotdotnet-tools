@@ -283,13 +283,21 @@ namespace NetFRC
         {
             halDownloadButton.Enabled = false;
             halInstallButton.Enabled = false;
-            DownloadManager.DownloadHAL(HALDownloadComplete, RecommendedVersions.GetHAL());
+            DownloadManager.DownloadHAL(HALDownloadComplete, HALProgressChanged, RecommendedVersions.GetHAL());
+        }
+
+        public void HALProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            
         }
 
         public void HALDownloadComplete()
         {
             Action action = () =>
                 {
+                    DownloadedVersions.Versions["HAL"] = RecommendedVersions.GetHAL();
+                    DownloadedVersions.WriteTxt();
+
                     AppendToStatus("HAL Download Complete");
                     DownloadedVersions.Start(DownloadedVersionsCallback);
                     halDownloadButton.Enabled = true;
@@ -336,7 +344,7 @@ namespace NetFRC
         {
             monoDLButton.Enabled = false;
             monoInstallButton.Enabled = false;
-            DownloadManager.DownloadMono(MonoDownloadComplete);
+            DownloadManager.DownloadMono(MonoDownloadComplete, null);
         }
 
         private void MonoDownloadComplete()
