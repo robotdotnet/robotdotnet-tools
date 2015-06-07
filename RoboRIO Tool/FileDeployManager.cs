@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,7 +32,7 @@ namespace RoboRIO_Tool
             }
             Thread t = new Thread(() =>
             {
-                writer.WriteLine("Deploying File.");
+                writer.WriteLine("Deploying File - " + Path.GetFileName(file));
                 bool retVal = RoboRIOConnection.DeployFiles(new[] {file}, deployLocation, m_manager.ConnectionInfo);
                 writer.WriteLine(retVal ? "Successfully deployed file." : "File Deployment failed.");
                 if (DeployComplete != null)
@@ -52,6 +53,10 @@ namespace RoboRIO_Tool
             Thread t = new Thread(() =>
             {
                 writer.WriteLine("Deploying Files.");
+                foreach (var s in files)
+                {
+                    writer.WriteLine(Path.GetFileName(s));
+                }
                 bool retVal = RoboRIOConnection.DeployFiles(files, deployLocation, m_manager.ConnectionInfo);
                 writer.WriteLine(retVal ? "Successfully deployed files." : "File Deployment failed.");
                 if (DeployComplete != null)
@@ -64,7 +69,7 @@ namespace RoboRIO_Tool
         {
             if (!m_manager.Connected)
                 return false;
-            writer.WriteLine("Deploying File.");
+            writer.WriteLine("Deploying File - " + Path.GetFileName(file));
             bool retVal = RoboRIOConnection.DeployFiles(new[] { file }, deployLocation, m_manager.ConnectionInfo);
             writer.WriteLine(retVal ? "Successfully deployed file." : "File Deployment failed.");
             return retVal;
@@ -75,6 +80,10 @@ namespace RoboRIO_Tool
             if (!m_manager.Connected)
                 return false;
             writer.WriteLine("Deploying Files.");
+            foreach (var s in files)
+            {
+                writer.WriteLine(Path.GetFileName(s));
+            }
             bool retVal = RoboRIOConnection.DeployFiles(files, deployLocation, m_manager.ConnectionInfo);
             writer.WriteLine(retVal ? "Successfully deployed file." : "File Deployment failed.");
             return retVal;

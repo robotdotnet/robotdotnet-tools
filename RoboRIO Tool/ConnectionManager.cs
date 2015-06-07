@@ -52,12 +52,17 @@ namespace RoboRIO_Tool
         public void ConnectAsync(string teamNumber, TimeSpan timeout, bool admin = false)
         {
             m_connection = null;
+            //throw new Exception();
             Thread t = new Thread(() =>
             {
                 m_connection = RoboRIOConnection.CheckConnection(teamNumber, out connectionType, out connectionIP, admin);
-                writer.WriteLine(GetConnectionStatus());
+                //writer.WriteLine(GetConnectionStatus());
+                //throw new Exception();
                 if (ConnectionComplete != null)
+                {
+                    //throw new Exception();
                     ConnectionComplete();
+                }
             });
 
             t.Start();

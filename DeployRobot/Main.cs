@@ -240,7 +240,7 @@ namespace DeployRobot
                 foreach (string f in Directory.GetFiles(codeDirectory.Text))
                 {
                     //Ignore non pure DLL or EXE files
-                    if (f.Contains("pdb") || f.Contains("vshost") || f.Contains(".config") | f.Contains(".manifest") || f.Contains("deploy.bat"))
+                    if (f.Contains("pdb") || f.Contains("vshost") || f.Contains(".config") || f.Contains(".manifest") || f.Contains("deploy.bat"))
                         continue;
                     //If its an EXE
                     if (f.Contains(".exe"))

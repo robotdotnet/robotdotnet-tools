@@ -49,6 +49,10 @@ namespace RoboRIO_Tool
             Thread t = new Thread(() =>
             {
                 writer.WriteLine("Running Commands.");
+                foreach (var s in commands)
+                {
+                    writer.WriteLine(s);
+                }
                 var retVal = RoboRIOConnection.RunCommands(commands, m_manager.ConnectionInfo);
                 if (CommandCompleted != null)
                     CommandCompleted(retVal);
@@ -71,6 +75,10 @@ namespace RoboRIO_Tool
         {
             if (!m_manager.Connected) return null;
             writer.WriteLine("Running Commands.");
+            foreach (var s in commands)
+            {
+                writer.WriteLine(s);
+            }
             Dictionary<string, string> retVal = RoboRIOConnection.RunCommands(commands, m_manager.ConnectionInfo);
             return retVal;
         }
