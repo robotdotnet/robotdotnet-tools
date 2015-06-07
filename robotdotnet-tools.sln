@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotDotNetBuildTasks", "Ro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatePatcher", "TemplatePatcher\TemplatePatcher.csproj", "{D24E5371-C148-4CE2-8594-B990532E4D06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboRIO Tool", "RoboRIO Tool\RoboRIO Tool.csproj", "{C08B8344-5322-41D6-81CC-56C431003562}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D24E5371-C148-4CE2-8594-B990532E4D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D24E5371-C148-4CE2-8594-B990532E4D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D24E5371-C148-4CE2-8594-B990532E4D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C08B8344-5322-41D6-81CC-56C431003562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C08B8344-5322-41D6-81CC-56C431003562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C08B8344-5322-41D6-81CC-56C431003562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C08B8344-5322-41D6-81CC-56C431003562}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
