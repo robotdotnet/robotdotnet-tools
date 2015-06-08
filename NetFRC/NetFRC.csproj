@@ -36,6 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
+    <Reference Include="RoboRIO-Tool">
+      <HintPath>..\packages\RoboRIO-Tool.0.1.0\lib\net45\RoboRIO-Tool.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -86,12 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RobotDotNetBuildTasks\RobotDotNetBuildTasks.csproj">
-      <Project>{5da967b7-f0ab-4a2f-8705-ae4f4d4afb26}</Project>
-      <Name>RobotDotNetBuildTasks</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

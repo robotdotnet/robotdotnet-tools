@@ -14,7 +14,16 @@ namespace NetFRC
         //Always download the newest mono. We control this, and its not automatically built.
         public static void DownloadMono(Action callback, DownloadProgressChangedEventHandler progressChanged)
         {
+            Main.AppendToStatus("Downloading Mono");
+            string dl =
+                "https://onedrive.live.com/download?cid=D648460250CFE566&resid=d648460250cfe566%2134215&authkey=AHW_pNeWDEv5Q-s";
 
+            using (var client = new WebClient())
+            {
+                client.DownloadProgressChanged += progressChanged;
+                client.DownloadFileCompleted += (sender, e) => callback();
+                client.DownloadFileAsync(new Uri(dl), "Downloads" + Path.DirectorySeparatorChar + "Mono" + Path.DirectorySeparatorChar + "mono.zip");
+            }
         }
 
         //Allow choice of which HAL to download. Allows either newest or recommeded HAL.

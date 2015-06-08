@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
-using RobotDotNetBuildTasks;
+using RoboRIO_Tool;
 
 namespace NetFRC
 {
@@ -21,7 +21,7 @@ namespace NetFRC
                 if (connectionManager.Connected)
                 {
                     string[] sent = { "cat /home/lvuser/mono/version", "mono --version" };
-                    var rioVersionDict = InstallDeployManager.RunCommands(sent, connectionManager.Connection);
+                    var rioVersionDict = RoboRIO_Tool.RoboRIOConnection.RunCommands(sent, connectionManager.ConnectionInfo);
                     var split = rioVersionDict[sent[0]].Split(':');
                     if (split[0] == "HAL")
                         versions["HAL"] = split[1].Trim().Replace(@"\n", "");

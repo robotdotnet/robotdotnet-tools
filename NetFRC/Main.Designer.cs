@@ -44,18 +44,8 @@
             this.monoInstalledLabed = new System.Windows.Forms.Label();
             this.monoDLButton = new System.Windows.Forms.Button();
             this.monoInstallButton = new System.Windows.Forms.Button();
-            this.templateLabel = new System.Windows.Forms.Label();
-            this.tempDLLabel = new System.Windows.Forms.Label();
-            this.deployLabel = new System.Windows.Forms.Label();
-            this.tempRecLabel = new System.Windows.Forms.Label();
-            this.deployDLLabel = new System.Windows.Forms.Label();
-            this.tempInstallLabel = new System.Windows.Forms.Label();
-            this.deployRecLabel = new System.Windows.Forms.Label();
-            this.templateDLButton = new System.Windows.Forms.Button();
-            this.deployInstalledLabel = new System.Windows.Forms.Label();
-            this.deployDLButton = new System.Windows.Forms.Button();
-            this.templateInstallButton = new System.Windows.Forms.Button();
-            this.deployInstallButton = new System.Windows.Forms.Button();
+            this.halProgress = new System.Windows.Forms.ProgressBar();
+            this.monoProgress = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // connectionStatus
@@ -212,152 +202,38 @@
             this.monoInstallButton.UseVisualStyleBackColor = true;
             this.monoInstallButton.Click += new System.EventHandler(this.monoInstallButton_Click);
             // 
-            // templateLabel
+            // halProgress
             // 
-            this.templateLabel.AutoSize = true;
-            this.templateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.templateLabel.Location = new System.Drawing.Point(24, 267);
-            this.templateLabel.Name = "templateLabel";
-            this.templateLabel.Size = new System.Drawing.Size(109, 20);
-            this.templateLabel.TabIndex = 7;
-            this.templateLabel.Text = "VS Templates";
+            this.halProgress.Location = new System.Drawing.Point(28, 294);
+            this.halProgress.Name = "halProgress";
+            this.halProgress.Size = new System.Drawing.Size(165, 23);
+            this.halProgress.TabIndex = 11;
             // 
-            // tempDLLabel
+            // monoProgress
             // 
-            this.tempDLLabel.AutoSize = true;
-            this.tempDLLabel.Location = new System.Drawing.Point(28, 291);
-            this.tempDLLabel.Name = "tempDLLabel";
-            this.tempDLLabel.Size = new System.Drawing.Size(111, 13);
-            this.tempDLLabel.TabIndex = 8;
-            this.tempDLLabel.Text = "Downloaded Version: ";
-            // 
-            // deployLabel
-            // 
-            this.deployLabel.AutoSize = true;
-            this.deployLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.deployLabel.Location = new System.Drawing.Point(296, 267);
-            this.deployLabel.Name = "deployLabel";
-            this.deployLabel.Size = new System.Drawing.Size(158, 20);
-            this.deployLabel.TabIndex = 7;
-            this.deployLabel.Text = "VS Deploy Extension";
-            // 
-            // tempRecLabel
-            // 
-            this.tempRecLabel.AutoSize = true;
-            this.tempRecLabel.Location = new System.Drawing.Point(28, 304);
-            this.tempRecLabel.Name = "tempRecLabel";
-            this.tempRecLabel.Size = new System.Drawing.Size(123, 13);
-            this.tempRecLabel.TabIndex = 8;
-            this.tempRecLabel.Text = "Recommended Version: ";
-            // 
-            // deployDLLabel
-            // 
-            this.deployDLLabel.AutoSize = true;
-            this.deployDLLabel.Location = new System.Drawing.Point(300, 291);
-            this.deployDLLabel.Name = "deployDLLabel";
-            this.deployDLLabel.Size = new System.Drawing.Size(111, 13);
-            this.deployDLLabel.TabIndex = 8;
-            this.deployDLLabel.Text = "Downloaded Version: ";
-            // 
-            // tempInstallLabel
-            // 
-            this.tempInstallLabel.AutoSize = true;
-            this.tempInstallLabel.Location = new System.Drawing.Point(28, 317);
-            this.tempInstallLabel.Name = "tempInstallLabel";
-            this.tempInstallLabel.Size = new System.Drawing.Size(134, 13);
-            this.tempInstallLabel.TabIndex = 8;
-            this.tempInstallLabel.Text = "Currently Installed Version: ";
-            // 
-            // deployRecLabel
-            // 
-            this.deployRecLabel.AutoSize = true;
-            this.deployRecLabel.Location = new System.Drawing.Point(300, 304);
-            this.deployRecLabel.Name = "deployRecLabel";
-            this.deployRecLabel.Size = new System.Drawing.Size(123, 13);
-            this.deployRecLabel.TabIndex = 8;
-            this.deployRecLabel.Text = "Recommended Version: ";
-            // 
-            // templateDLButton
-            // 
-            this.templateDLButton.Enabled = false;
-            this.templateDLButton.Location = new System.Drawing.Point(28, 345);
-            this.templateDLButton.Name = "templateDLButton";
-            this.templateDLButton.Size = new System.Drawing.Size(134, 40);
-            this.templateDLButton.TabIndex = 9;
-            this.templateDLButton.Text = "Download Recommended Version";
-            this.templateDLButton.UseVisualStyleBackColor = true;
-            this.templateDLButton.Click += new System.EventHandler(this.templateDLButton_Click);
-            // 
-            // deployInstalledLabel
-            // 
-            this.deployInstalledLabel.AutoSize = true;
-            this.deployInstalledLabel.Location = new System.Drawing.Point(300, 317);
-            this.deployInstalledLabel.Name = "deployInstalledLabel";
-            this.deployInstalledLabel.Size = new System.Drawing.Size(134, 13);
-            this.deployInstalledLabel.TabIndex = 8;
-            this.deployInstalledLabel.Text = "Currently Installed Version: ";
-            // 
-            // deployDLButton
-            // 
-            this.deployDLButton.Enabled = false;
-            this.deployDLButton.Location = new System.Drawing.Point(300, 345);
-            this.deployDLButton.Name = "deployDLButton";
-            this.deployDLButton.Size = new System.Drawing.Size(134, 40);
-            this.deployDLButton.TabIndex = 9;
-            this.deployDLButton.Text = "Download Recommended Version";
-            this.deployDLButton.UseVisualStyleBackColor = true;
-            this.deployDLButton.Click += new System.EventHandler(this.deployDLButton_Click);
-            // 
-            // templateInstallButton
-            // 
-            this.templateInstallButton.Enabled = false;
-            this.templateInstallButton.Location = new System.Drawing.Point(31, 391);
-            this.templateInstallButton.Name = "templateInstallButton";
-            this.templateInstallButton.Size = new System.Drawing.Size(134, 40);
-            this.templateInstallButton.TabIndex = 9;
-            this.templateInstallButton.Text = "Install Visual Studio Templates";
-            this.templateInstallButton.UseVisualStyleBackColor = true;
-            this.templateInstallButton.Click += new System.EventHandler(this.templateInstallButton_Click);
-            // 
-            // deployInstallButton
-            // 
-            this.deployInstallButton.Enabled = false;
-            this.deployInstallButton.Location = new System.Drawing.Point(303, 391);
-            this.deployInstallButton.Name = "deployInstallButton";
-            this.deployInstallButton.Size = new System.Drawing.Size(134, 40);
-            this.deployInstallButton.TabIndex = 9;
-            this.deployInstallButton.Text = "Install Visual Studio Deploy Extension";
-            this.deployInstallButton.UseVisualStyleBackColor = true;
-            this.deployInstallButton.Click += new System.EventHandler(this.deployInstallButton_Click);
+            this.monoProgress.Location = new System.Drawing.Point(297, 294);
+            this.monoProgress.Name = "monoProgress";
+            this.monoProgress.Size = new System.Drawing.Size(165, 23);
+            this.monoProgress.TabIndex = 11;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(974, 454);
+            this.Controls.Add(this.monoProgress);
+            this.Controls.Add(this.halProgress);
             this.Controls.Add(this.getRecommendVersionsButton);
-            this.Controls.Add(this.deployInstallButton);
             this.Controls.Add(this.monoInstallButton);
-            this.Controls.Add(this.templateInstallButton);
             this.Controls.Add(this.halInstallButton);
-            this.Controls.Add(this.deployDLButton);
-            this.Controls.Add(this.deployInstalledLabel);
             this.Controls.Add(this.monoDLButton);
-            this.Controls.Add(this.templateDLButton);
             this.Controls.Add(this.monoInstalledLabed);
-            this.Controls.Add(this.deployRecLabel);
             this.Controls.Add(this.halDownloadButton);
-            this.Controls.Add(this.tempInstallLabel);
             this.Controls.Add(this.monoRecommendedLabel);
-            this.Controls.Add(this.deployDLLabel);
             this.Controls.Add(this.halCurrentLabel);
-            this.Controls.Add(this.tempRecLabel);
             this.Controls.Add(this.monoDownloadedLabel);
-            this.Controls.Add(this.deployLabel);
             this.Controls.Add(this.halRecommendedVersionLabel);
-            this.Controls.Add(this.tempDLLabel);
             this.Controls.Add(this.monoLabel);
-            this.Controls.Add(this.templateLabel);
             this.Controls.Add(this.halDownloadedVersionLabel);
             this.Controls.Add(this.halLabel);
             this.Controls.Add(this.connectionStatus);
@@ -389,18 +265,8 @@
         private System.Windows.Forms.Label monoInstalledLabed;
         private System.Windows.Forms.Button monoDLButton;
         private System.Windows.Forms.Button monoInstallButton;
-        private System.Windows.Forms.Label templateLabel;
-        private System.Windows.Forms.Label tempDLLabel;
-        private System.Windows.Forms.Label deployLabel;
-        private System.Windows.Forms.Label tempRecLabel;
-        private System.Windows.Forms.Label deployDLLabel;
-        private System.Windows.Forms.Label tempInstallLabel;
-        private System.Windows.Forms.Label deployRecLabel;
-        private System.Windows.Forms.Button templateDLButton;
-        private System.Windows.Forms.Label deployInstalledLabel;
-        private System.Windows.Forms.Button deployDLButton;
-        private System.Windows.Forms.Button templateInstallButton;
-        private System.Windows.Forms.Button deployInstallButton;
+        private System.Windows.Forms.ProgressBar halProgress;
+        private System.Windows.Forms.ProgressBar monoProgress;
     }
 }
 
