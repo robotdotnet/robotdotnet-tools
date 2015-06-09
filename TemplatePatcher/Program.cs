@@ -31,11 +31,11 @@ namespace TemplatePatcher
             string ver = Console.ReadLine();
             Console.CursorVisible = false;
 
-            if (File.Exists("FRC Robot Templates\\source.extension.vsixmanifest"))
+            if (File.Exists("FRC Extension\\source.extension.vsixmanifest"))
             {
                 new Thread(() =>
                 {
-                    VSIXManager vsix = new VSIXManager("FRC Robot Templates\\source.extension.vsixmanifest");
+                    VSIXManager vsix = new VSIXManager("FRC Extension\\source.extension.vsixmanifest");
                     Console.WriteLine("Replacing VSIX Version to " + ver);
                     vsix.ReplaceVersion(ver);
                     Console.WriteLine("Writing VSIX File");
@@ -44,14 +44,14 @@ namespace TemplatePatcher
                 }).Start();
             }
 
-            foreach (var s in Directory.EnumerateFiles("CSharp\\Project Templates", "*.vstemplate", SearchOption.AllDirectories))
+            foreach (var s in Directory.EnumerateFiles("Templates\\CSharp\\Project Templates", "*.vstemplate", SearchOption.AllDirectories))
             {
                 Console.WriteLine("Found Template File: " + s);
                 templateFiles.Add(new TemplateManager(s));
             }
 
-            if (File.Exists("FRC Robot Templates\\FRC Robot Templates.csproj"))
-                patcher = new TemplateProjectPatcher("FRC Robot Templates\\FRC Robot Templates.csproj");
+            if (File.Exists("FRC Extension\\FRC Extension.csproj"))
+                patcher = new TemplateProjectPatcher("FRC Extension\\FRC Extension.csproj");
 
             //manager = new TemplateManager("IterativeRobot.vstemplate");
             Console.WriteLine("Downloading WPILib");

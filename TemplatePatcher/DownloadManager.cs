@@ -20,9 +20,9 @@ namespace TemplatePatcher
         {
             new Thread(() =>
             {
-                const string dlLocation = "FRC Robot Templates\\packages\\WPILib.nupkg";
+                const string dlLocation = "FRC Extension\\packages\\WPILib.nupkg";
                 CustomWebClient client = new CustomWebClient();
-                client.DownloadFile("https://www.myget.org/F/robotdotnet/api/v2/package/WPILib/", dlLocation);
+                client.DownloadFile("https://www.nuget.org/api/v2/package/WPILib/", dlLocation);
                 try
                 {
                     WPIVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
@@ -43,9 +43,9 @@ namespace TemplatePatcher
         public static void GetNewestNT(Action OnComplete)
         {new Thread(() =>
         {
-            const string dlLocation = "FRC Robot Templates\\packages\\NetworkTablesDotNet.nupkg";
+            const string dlLocation = "FRC Extension\\packages\\NetworkTablesDotNet.nupkg";
                 CustomWebClient client = new CustomWebClient();
-                client.DownloadFile(new Uri("https://www.myget.org/F/robotdotnet/api/v2/package/NetworkTablesDotNet/"), dlLocation);
+                client.DownloadFile(new Uri("https://www.nuget.org/api/v2/package/NetworkTablesDotNet/"), dlLocation);
                 try
                 {
                     NTVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
