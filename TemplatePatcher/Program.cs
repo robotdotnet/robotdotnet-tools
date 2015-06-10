@@ -26,24 +26,6 @@ namespace TemplatePatcher
 
         static void Main(string[] args)
         {
-            Console.CursorVisible = true;
-            Console.Write("Enter Version Number: ");
-            string ver = Console.ReadLine();
-            Console.CursorVisible = false;
-
-            if (File.Exists("FRC Extension\\source.extension.vsixmanifest"))
-            {
-                new Thread(() =>
-                {
-                    VSIXManager vsix = new VSIXManager("FRC Extension\\source.extension.vsixmanifest");
-                    Console.WriteLine("Replacing VSIX Version to " + ver);
-                    vsix.ReplaceVersion(ver);
-                    Console.WriteLine("Writing VSIX File");
-                    vsix.WriteFile();
-                    Console.WriteLine("Sucessfully Wrote VSIX File");
-                }).Start();
-            }
-
             foreach (var s in Directory.EnumerateFiles("Templates\\CSharp\\Project Templates", "*.vstemplate", SearchOption.AllDirectories))
             {
                 Console.WriteLine("Found Template File: " + s);
@@ -53,6 +35,12 @@ namespace TemplatePatcher
             if (File.Exists("FRC Extension\\FRC Extension.csproj"))
                 patcher = new TemplateProjectPatcher("FRC Extension\\FRC Extension.csproj");
 
+
+            Console.WriteLine("Deleting Exisitng nupkg files");
+            foreach (var s in Directory.EnumerateFiles("FRC Extension\\packages\\"))
+            {
+                File.Delete(s);
+            }
             //manager = new TemplateManager("IterativeRobot.vstemplate");
             Console.WriteLine("Downloading WPILib");
             DownloadManager.GetNewestWPILib(OnWPILibComplete);

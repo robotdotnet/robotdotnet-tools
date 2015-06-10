@@ -25,7 +25,9 @@ namespace TemplatePatcher
                 client.DownloadFile("https://www.nuget.org/api/v2/package/WPILib/", dlLocation);
                 try
                 {
-                    WPIVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
+                    int firstP = client.ResponseURI.AbsolutePath.IndexOf('.');
+                    int lastP = client.ResponseURI.AbsolutePath.LastIndexOf('.');
+                    WPIVersion = client.ResponseURI.AbsolutePath.Substring(firstP + 1, (lastP - firstP) - 1);
                     if (File.Exists(dlLocation.Replace(".nupkg", "." + WPIVersion + ".nupkg")))
                     {
                         File.Delete(dlLocation.Replace(".nupkg", "." + WPIVersion + ".nupkg"));
@@ -48,7 +50,9 @@ namespace TemplatePatcher
                 client.DownloadFile(new Uri("https://www.nuget.org/api/v2/package/NetworkTablesDotNet/"), dlLocation);
                 try
                 {
-                    NTVersion = client.ResponseURI.AbsolutePath.Split('-')[1];
+                    int firstP = client.ResponseURI.AbsolutePath.IndexOf('.');
+                    int lastP = client.ResponseURI.AbsolutePath.LastIndexOf('.');
+                    NTVersion = client.ResponseURI.AbsolutePath.Substring(firstP + 1, (lastP - firstP) - 1);
                     if (File.Exists(dlLocation.Replace(".nupkg", "." + NTVersion + ".nupkg")))
                     {
                         File.Delete(dlLocation.Replace(".nupkg", "." + NTVersion + ".nupkg"));
