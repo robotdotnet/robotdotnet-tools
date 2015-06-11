@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hal-generator", "hal-generator\hal-generator.csproj", "{44E36844-9BF8-4B4C-B00B-F7BE9500124E}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplatePatcher", "TemplatePatcher\TemplatePatcher.csproj", "{D24E5371-C148-4CE2-8594-B990532E4D06}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoboRIO Tool", "RoboRIO Tool\RoboRIO Tool.csproj", "{C08B8344-5322-41D6-81CC-56C431003562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseBuilder", "ReleaseBuilder\ReleaseBuilder.csproj", "{34033537-2E74-459D-B88C-E40C1AAA68C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{C08B8344-5322-41D6-81CC-56C431003562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C08B8344-5322-41D6-81CC-56C431003562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C08B8344-5322-41D6-81CC-56C431003562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34033537-2E74-459D-B88C-E40C1AAA68C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34033537-2E74-459D-B88C-E40C1AAA68C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34033537-2E74-459D-B88C-E40C1AAA68C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34033537-2E74-459D-B88C-E40C1AAA68C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
