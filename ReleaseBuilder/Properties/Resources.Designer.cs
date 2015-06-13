@@ -61,6 +61,24 @@ namespace ReleaseBuilder.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://github.com/robotdotnet/FRC-Extension.git.
+        /// </summary>
+        internal static string ExtensionRepository {
+            get {
+                return ResourceManager.GetString("ExtensionRepository", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe.
+        /// </summary>
+        internal static string MSBuildPath {
+            get {
+                return ResourceManager.GetString("MSBuildPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to https://www.nuget.org/api/v2/package/NetworkTablesDotNet/.
         /// </summary>
         internal static string NetworkTablesDotNetNuGet {

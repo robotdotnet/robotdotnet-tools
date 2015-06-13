@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExtensionRepository" xml:space="preserve">
+    <value>https://github.com/robotdotnet/FRC-Extension.git</value>
+  </data>
+  <data name="MSBuildPath" xml:space="preserve">
+    <value>C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe</value>
+  </data>
   <data name="NetworkTablesDotNetNuGet" xml:space="preserve">
     <value>https://www.nuget.org/api/v2/package/NetworkTablesDotNet/</value>
     <comment>The NetworkTablesDotNet NuGet Feed</comment>
