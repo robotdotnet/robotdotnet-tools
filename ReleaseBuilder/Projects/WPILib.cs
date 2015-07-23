@@ -30,7 +30,7 @@ namespace ReleaseBuilder.Projects
         public void CloneRepository()
         {
             CloneOptions options = new CloneOptions();
-            options.BranchName = "CSharp-6.0-Update";
+            //options.BranchName = "CSharp-6.0-Update";
             Repository.Clone(WPILibRepository, name, options);
         }
 
@@ -51,9 +51,9 @@ namespace ReleaseBuilder.Projects
                     var arr = File.ReadAllLines(d);
                     for (int i = 0; i < arr.Length; i++)
                     {
-                        if (arr[i].Contains("NetworkTablesDotNet"))
+                        if (arr[i].Contains("NetworkTables"))
                         {
-                            arr[i] = $"  <package id=\"NetworkTablesDotNet\" version=\"{nt.Version}\" targetFramework=\"net45\" />";
+                            arr[i] = $"  <package id=\"FRC.NetworkTables\" version=\"{nt.Version}\" targetFramework=\"net45\" />";
                         }
                     }
                     File.Delete(d);
@@ -75,7 +75,7 @@ namespace ReleaseBuilder.Projects
 
             string path = $"{name}\\packages";
             PackageManager manager = new PackageManager(repo, path);
-            manager.InstallPackage("NetworkTablesDotNet", SemanticVersion.Parse(nt.Version));
+            manager.InstallPackage("FRC.NetworkTables", SemanticVersion.Parse(nt.Version));
 
             //Patch csproj's for newest
             foreach (var s in Directory.EnumerateFiles(name, "*.csproj", SearchOption.AllDirectories))
@@ -83,15 +83,15 @@ namespace ReleaseBuilder.Projects
                 string[] load = File.ReadAllLines(s);
                 for (int i = 0; i < load.Length; i++)
                 {
-                    if (load[i].Contains("Reference Include=\"NetworkTablesDotNet"))
+                    if (load[i].Contains("Reference Include=\"NetworkTables"))
                     {
                         load[i] =
-                            $"    <Reference Include=\"NetworkTablesDotNet, Version = {nt.Version}.0, Culture = neutral, processorArchitecture = MSIL\">";
+                            $"    <Reference Include=\"NetworkTables, Version = {nt.Version}.0, Culture = neutral, processorArchitecture = MSIL\">";
                     }
-                    if (load[i].Contains("<HintPath>..\\packages\\NetworkTablesDotNet"))
+                    if (load[i].Contains("<HintPath>..\\packages\\FRC.NetworkTables"))
                     {
                         load[i] =
-                            $"      <HintPath>..\\packages\\NetworkTablesDotNet.{nt.Version}\\lib\\net45\\NetworkTablesDotNet.dll</HintPath>";
+                            $"      <HintPath>..\\packages\\FRC.NetworkTables.{nt.Version}\\lib\\net45\\NetworkTables.dll</HintPath>";
                     }
                 }
                 File.Delete(s);

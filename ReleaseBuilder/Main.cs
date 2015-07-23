@@ -69,9 +69,9 @@ namespace ReleaseBuilder
         private async void button1_Click(object sender, EventArgs e)
         {
             Dictionary<string, string> vers = new Dictionary<string, string>();
-            vers.Add("NT", "2015.0.1");
-            vers.Add("WPI", "2015.0.1");
-            vers.Add("EXT", "2015.0.1");
+            vers.Add("NT", "2015.0.4");
+            vers.Add("WPI", "2015.0.7");
+            vers.Add("EXT", "2015.0.7");
 
             List<CheckedProject> projects = new List<CheckedProject>();
 

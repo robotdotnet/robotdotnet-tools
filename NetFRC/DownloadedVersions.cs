@@ -63,53 +63,11 @@ namespace NetFRC
                 }).Start();
         }
 
-        private static bool FoundHAL()
-        {
-            return versions.ContainsKey("HAL");
-        }
-
-        private static bool FoundDeploy()
-        {
-            return versions.ContainsKey("DEPLOY");
-        }
-
-        private static bool FoundTemplate()
-        {
-            return versions.ContainsKey("TEMPLATE");
-        }
 
         private static bool FoundMono()
         {
             return versions.ContainsKey("MONO");
         }
-
-        public static string GetHAL()
-        {
-            if (FoundHAL())
-            {
-                return versions["HAL"];
-            }
-            return null;
-        }
-
-        public static string GetDeploy()
-        {
-            if (FoundDeploy())
-            {
-                return versions["DEPLOY"];
-            }
-            return null;
-        }
-
-        public static string GetTemplate()
-        {
-            if (FoundTemplate())
-            {
-                return versions["TEMPLATE"];
-            }
-            return null;
-        }
-
         public static string GetMono()
         {
             if (FoundMono())

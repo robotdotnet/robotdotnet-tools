@@ -78,13 +78,6 @@ namespace NetFRC
             DownloadedVersions.Start(DownloadedVersionsCallback);
         }
 
-        public void CheckHAL()
-        {
-            if (connectionManager.Connected && (DownloadedVersions.GetHAL() != null))
-            {
-                halInstallButton.Enabled = true;
-            }
-        }
 
         public void CheckMono()
         {
@@ -100,19 +93,10 @@ namespace NetFRC
         {
             Action action = () =>
                 {
-                    halDownloadedVersionLabel.Text = "Downloaded Version: None";
                     monoDownloadedLabel.Text = "Downloaded Version: None";
                     //Do other 4 labels
 
-                    var dl = DownloadedVersions.GetHAL();
-                    if (dl != null)
-                    {
-                        halDownloadedVersionLabel.Text = "Downloaded Version: " + dl;
-                        //halInstallButton.Enabled = true;
-                        CheckHAL();
-                    }
-
-                    dl = DownloadedVersions.GetMono();
+                    var dl = DownloadedVersions.GetMono();
                     if (dl != null)
                     {
                         monoDownloadedLabel.Text = "Downloaded Version: " + dl;
@@ -128,17 +112,9 @@ namespace NetFRC
         {
             Action action = () =>
             {
-                halRecommendedVersionLabel.Text = "Recommended Version: None";
                 monoRecommendedLabel.Text = "Recommended Version: None";
 
-                var rec = RecommendedVersions.GetHAL();
-                if (rec != null)
-                {
-                    halRecommendedVersionLabel.Text = "Recommended Version: " + rec;
-                    halDownloadButton.Enabled = true;
-                }
-
-                rec = RecommendedVersions.GetMono();
+                var rec = RecommendedVersions.GetMono();
                 if (rec != null)
                 {
                     monoRecommendedLabel.Text = "Recommended Version: " + rec;
@@ -160,18 +136,13 @@ namespace NetFRC
         {
             Action action = () =>
             {
-                halCurrentLabel.Text = "Currently Installed Version: None";
-                var locHAL = LocalVersions.GetHAL();
-                if (locHAL != null)
-                {
-                    halCurrentLabel.Text = "Currently Installed Version: " + locHAL;
-                }
-
                 monoInstalledLabed.Text = "Currently Installed Version: None";
                 var locMono = LocalVersions.GetMono();
                 if (locMono != null)
                 {
                     monoInstalledLabed.Text = "Currently Installed Version: " + locMono;
+                    CheckMono();
+                    
                 }
             };
             Invoke(action);
@@ -207,7 +178,6 @@ namespace NetFRC
 
                 //StartCheckRIOVersions();
                 LocalVersions.StartRIO(CheckRIOVersionsComplete, connectionManager);
-                CheckHAL();
                 //EnableConnections(connectionManager.Connected);
             };
 
@@ -229,64 +199,8 @@ namespace NetFRC
             statusWindow.Invoke(action);
         }
 
-        private void halDownloadButton_Click(object sender, EventArgs e)
-        {
-            halDownloadButton.Enabled = false;
-            halInstallButton.Enabled = false;
-            DownloadManager.DownloadHAL(HALDownloadComplete, HALProgressChanged, RecommendedVersions.GetHAL());
-        }
 
-        public void HALProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            double percentage = (double)e.BytesReceived / e.TotalBytesToReceive;
-            percentage *= 100;
-            halProgress.Value = (int)percentage;
 
-        }
-
-        public void HALDownloadComplete()
-        {
-            Action action = () =>
-                {
-                    DownloadedVersions.Versions["HAL"] = RecommendedVersions.GetHAL();
-                    DownloadedVersions.WriteTxt();
-
-                    AppendToStatus("HAL Download Complete");
-                    DownloadedVersions.Start(DownloadedVersionsCallback);
-                    halDownloadButton.Enabled = true;
-                    CheckHAL();
-                };
-            Invoke(action);
-        }
-
-        private void halInstallButton_Click(object sender, EventArgs e)
-        {
-            AppendToStatus("Installing HAL");
-            halInstallButton.Enabled = false;
-            new Thread(() =>
-            {
-                List<string> deploy = new List<string>();
-                deploy.Add("Downloads" + Path.DirectorySeparatorChar + "HAL" + Path.DirectorySeparatorChar +
-                           "libHALAthena_shared.so");
-                RoboRIOConnection.DeployFiles(deploy.ToArray(), "/home/lvuser/mono", connectionManager.ConnectionInfo);
-                deploy.Clear();
-                deploy.Add("rm /home/lvuser/mono/version");
-                deploy.Add("echo HAL:" + DownloadedVersions.GetHAL() + "> /home/lvuser/mono/version");
-                RoboRIOConnection.RunCommands(deploy.ToArray(), connectionManager.ConnectionInfo);
-                LocalVersions.StartRIO(CheckRIOVersionsComplete, connectionManager);
-                HALInstallFinished();
-            }).Start();
-        }
-
-        public void HALInstallFinished()
-        {
-            Action action = () =>
-            {
-                AppendToStatus("Successfully Deployed HAL");
-                halInstallButton.Enabled = true;
-            };
-            this.Invoke(action);
-        }
 
         private void getRecommendVersionsButton_Click(object sender, EventArgs e)
         {

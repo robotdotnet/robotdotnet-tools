@@ -58,13 +58,13 @@ namespace ReleaseBuilder.Projects
             var file = File.ReadAllLines(csFile);
             for (int i = 0; i < file.Length; i++)
             {
-                if (file[i].Contains("<Content Include=\"packages\\WPILib"))
+                if (file[i].Contains("<Content Include=\"packages\\FRC.WPILib"))
                 {
-                    file[i] = $"    <Content Include=\"packages\\WPILib.{wpi.Version}.nupkg\">";
+                    file[i] = $"    <Content Include=\"packages\\FRC.WPILib.{wpi.Version}.nupkg\">";
                 }
-                if (file[i].Contains("<Content Include=\"packages\\NetworkTablesDotNet"))
+                if (file[i].Contains("<Content Include=\"packages\\FRC.NetworkTables"))
                 {
-                    file[i] = $"    <Content Include=\"packages\\NetworkTablesDotNet.{nt.Version}.nupkg\">";
+                    file[i] = $"    <Content Include=\"packages\\FRC.NetworkTables.{nt.Version}.nupkg\">";
                 }
             }
 
@@ -77,13 +77,13 @@ namespace ReleaseBuilder.Projects
                 var templateFile = File.ReadAllLines(s);
                 for (int i = 0; i < templateFile.Length; i++)
                 {
-                    if (templateFile[i].Contains("package id=\"WPILib\""))
+                    if (templateFile[i].Contains("package id=\"FRC.WPILib\""))
                     {
-                        templateFile[i] = $"       <package id=\"WPILib\" version=\"{wpi.Version}\"/>";
+                        templateFile[i] = $"       <package id=\"FRC.WPILib\" version=\"{wpi.Version}\"/>";
                     }
-                    if (templateFile[i].Contains("<package id=\"NetworkTablesDotNet\""))
+                    if (templateFile[i].Contains("<package id=\"FRC.NetworkTables\""))
                     {
-                        templateFile[i] = $"       <package id=\"NetworkTablesDotNet\" version=\"{nt.Version}\"/>";
+                        templateFile[i] = $"       <package id=\"FRC.NetworkTables\" version=\"{nt.Version}\"/>";
                     }
                 }
 
@@ -104,8 +104,8 @@ namespace ReleaseBuilder.Projects
                 File.Delete(f);
             }
 
-            File.Copy($"Packages\\WPILib.{wpi.Version}.nupkg", $"{name}\\{name}\\packages\\WPILib.{wpi.Version}.nupkg");
-            File.Copy($"Packages\\NetworkTablesDotNet.{nt.Version}.nupkg", $"{name}\\{name}\\packages\\NetworkTablesDotNet.{nt.Version}.nupkg");
+            File.Copy($"Packages\\FRC.WPILib.{wpi.Version}.nupkg", $"{name}\\{name}\\packages\\FRC.WPILib.{wpi.Version}.nupkg");
+            File.Copy($"Packages\\FRC.NetworkTables.{nt.Version}.nupkg", $"{name}\\{name}\\packages\\FRC.NetworkTables.{nt.Version}.nupkg");
         }
 
         public void BuildExtension()

@@ -67,7 +67,7 @@ namespace ReleaseBuilder.Projects
         }
 
         public void BuildDocumentation()
-        { 
+        {
             //We need to patch the export location 
             string sandPath = $"{name}\\Sandcastle\\Sandcastle.shfbproj";
             if (File.Exists(sandPath))

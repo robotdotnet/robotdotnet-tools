@@ -88,7 +88,7 @@ namespace ReleaseBuilder
             // Else Download the latest assembly
             else
             {
-                string packageID = "NetworkTablesDotNet";
+                string packageID = "FRC.NetworkTables";
                 IPackageRepository repo =
                     PackageRepositoryFactory.Default.CreateRepository("https://packages.nuget.org/api/v2");
                 List<IPackage> packages = repo.FindPackagesById(packageID).ToList();
@@ -99,7 +99,7 @@ namespace ReleaseBuilder
                     networkTable.Version = packages[0].Version.ToString();
                     Directory.CreateDirectory("Packages");
                     WebClient client = new WebClient();
-                    client.DownloadFile(((DataServicePackage)packages[0]).DownloadUrl.AbsoluteUri, $"Packages\\{packages[0].Title}.{networkTable.Version}.nupkg");
+                    client.DownloadFile(((DataServicePackage)packages[0]).DownloadUrl.AbsoluteUri, $"Packages\\{packages[0].Id}.{networkTable.Version}.nupkg");
                     //PackageManager packageManager = new PackageManager(repo, "Packages");
                     //packageManager.InstallPackage(packageID, packages[0].Version);
                 }
@@ -134,7 +134,7 @@ namespace ReleaseBuilder
                     wpiLib.Version = packages[0].Version.ToString();
                     Directory.CreateDirectory("Packages");
                     WebClient client = new WebClient();
-                    client.DownloadFile(((DataServicePackage)packages[0]).DownloadUrl.AbsoluteUri, $"Packages\\{packages[0].Title}.{wpiLib.Version}.nupkg");
+                    client.DownloadFile(((DataServicePackage)packages[0]).DownloadUrl.AbsoluteUri, $"Packages\\{packages[0].Id}.{wpiLib.Version}.nupkg");
                     //PackageManager packageManager = new PackageManager(repo, "Packages");
                     //packageManager.InstallPackage(packageID, packages[0].Version);
                 }
@@ -164,7 +164,7 @@ namespace ReleaseBuilder
             //Copy WPILib
             foreach (
                 var s in
-                    Directory.EnumerateFiles($"{packDir}\\", "WPI*",
+                    Directory.EnumerateFiles($"{packDir}\\", "FRC.WPI*",
                         SearchOption.AllDirectories))
             {
                 Directory.CreateDirectory($"{outDir}");
@@ -173,7 +173,7 @@ namespace ReleaseBuilder
 
             foreach (
                 var s in
-                    Directory.EnumerateFiles($"{packDir}\\", "NetworkTables*",
+                    Directory.EnumerateFiles($"{packDir}\\", "FRC.NetworkTables*",
                         SearchOption.AllDirectories))
             {
                 Directory.CreateDirectory($"{outDir}");
