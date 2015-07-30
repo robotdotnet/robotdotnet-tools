@@ -42,7 +42,16 @@ namespace ReleaseBuilder.Projects
             {
                 Main.WriteStatusWindow($"Patching {s}");
                 VersionPatcher.Patch(name, s, Version +".0");//TODO: Replace with Version
+
             }
+
+            Process p = new Process();
+            p.StartInfo.CreateNoWindow = false;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.FileName = "nuget";
+            p.StartInfo.Arguments = $"restore {name}\\{name}.sln";
+            p.Start();
+            p.WaitForExit();
         }
 
         public void BuildSolution()

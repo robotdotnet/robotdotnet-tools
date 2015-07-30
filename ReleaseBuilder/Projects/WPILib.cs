@@ -63,6 +63,14 @@ namespace ReleaseBuilder.Projects
 
             }
 
+            Process p = new Process();
+            p.StartInfo.CreateNoWindow = false;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.FileName = "nuget";
+            p.StartInfo.Arguments = $"restore {name}\\{name}.sln";
+            p.Start();
+            p.WaitForExit();
+
 
         }
 
